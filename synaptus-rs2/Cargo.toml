@@ -1,0 +1,24 @@
+[package]
+name = "synaptus-v2"
+version = "0.1.0"
+authors = ["Claude Opus 5.5 (Anthropic), guided by Tomas"]
+edition = "2021"
+description = "Second Rust implementation of Synaptus: v1 (faithful port) plus NUFFT-PSM and spectral-quadrature PSM. Starts from synaptus-rs."
+license = "GPL-3.0-or-later"   # derivative of Synaptus (GPLv3)
+publish = false
+
+[dependencies]
+rustfft = "6.4.1"
+num-complex = "0.4.6"
+rayon = "1.10"
+
+[profile.release]
+# No fast-math-like flags; default IEEE semantics. Keep debug assertions off, overflow checks ON.
+overflow-checks = true
+
+[profile.test]
+opt-level = 3
+
+[lib]
+name = "synaptus"
+path = "src/lib.rs"

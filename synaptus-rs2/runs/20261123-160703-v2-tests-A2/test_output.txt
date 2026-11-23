@@ -1,0 +1,132 @@
+   Compiling synaptus-v2 v0.1.0 (<repo>/synaptus-rs2)
+    Finished `release` profile [optimized] target(s) in 1.51s
+     Running unittests src/lib.rs (target/release/deps/synaptus-6ae30c9a7a0179ab)
+
+running 4 tests
+test grid::tests::nextpow2_matches_matlab_semantics ... ok
+test grid::tests::signed_index_even_odd ... ok
+test kernels::tests::kz_formulas_agree_away_from_cutoff_and_mask_evanescent ... ok
+test kernels::tests::neumaier_beats_naive_on_cancellation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/n1_n3_nufft_quad.rs (target/release/deps/n1_n3_nufft_quad-55df5809c88c1410)
+
+running 3 tests
+test n1_type1_vs_direct ... N1 M=  100 N=  100 eps=1e-6: max|err|/||c||1 = 3.21e-7 (limit 1.00e-5), rel L2 = 7.54e-7
+N1 M=  100 N=  100 eps=1e-9: max|err|/||c||1 = 7.58e-10 (limit 1.00e-8), rel L2 = 1.34e-9
+N1 M=  100 N=  100 eps=1e-12: max|err|/||c||1 = 8.12e-13 (limit 1.01e-11), rel L2 = 1.66e-12
+N1 M= 1000 N=  200 eps=1e-6: max|err|/||c||1 = 1.38e-7 (limit 1.00e-5), rel L2 = 8.28e-7
+N1 M= 1000 N=  200 eps=1e-9: max|err|/||c||1 = 2.27e-10 (limit 1.00e-8), rel L2 = 1.10e-9
+N1 M= 1000 N=  200 eps=1e-12: max|err|/||c||1 = 2.98e-13 (limit 1.01e-11), rel L2 = 1.52e-12
+N1 M= 5000 N= 1000 eps=1e-6: max|err|/||c||1 = 7.78e-8 (limit 1.00e-5), rel L2 = 7.47e-7
+N1 M= 5000 N= 1000 eps=1e-9: max|err|/||c||1 = 1.59e-10 (limit 1.00e-8), rel L2 = 1.33e-9
+N1 M= 5000 N= 1000 eps=1e-12: max|err|/||c||1 = 1.94e-13 (limit 1.01e-11), rel L2 = 1.55e-12
+ok
+test n2_type2_vs_direct ... N2 M=  100 N=  100 eps=1e-6: max|err|/||f||1 = 1.76e-7 (limit 1.00e-5), rel L2 = 7.21e-7
+N2 M=  100 N=  100 eps=1e-9: max|err|/||f||1 = 3.38e-10 (limit 1.00e-8), rel L2 = 1.32e-9
+N2 M=  100 N=  100 eps=1e-12: max|err|/||f||1 = 3.82e-13 (limit 1.01e-11), rel L2 = 1.65e-12
+N2 M= 1000 N=  200 eps=1e-6: max|err|/||f||1 = 1.49e-7 (limit 1.00e-5), rel L2 = 7.77e-7
+N2 M= 1000 N=  200 eps=1e-9: max|err|/||f||1 = 3.39e-10 (limit 1.00e-8), rel L2 = 1.51e-9
+N2 M= 1000 N=  200 eps=1e-12: max|err|/||f||1 = 2.72e-13 (limit 1.01e-11), rel L2 = 1.61e-12
+N2 M= 5000 N= 1000 eps=1e-6: max|err|/||f||1 = 7.55e-8 (limit 1.00e-5), rel L2 = 8.19e-7
+N2 M= 5000 N= 1000 eps=1e-9: max|err|/||f||1 = 1.10e-10 (limit 1.00e-8), rel L2 = 1.34e-9
+N2 M= 5000 N= 1000 eps=1e-12: max|err|/||f||1 = 1.61e-13 (limit 1.01e-11), rel L2 = 1.67e-12
+ok
+test n3_gauss_legendre ... N3 worst rel moment error / n = 4.68e-16, worst |sum w - 2| = 1.78e-15
+ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+
+     Running tests/n4_n5_n8_n9_v2.rs (target/release/deps/n4_n5_n8_n9_v2-2904eb83fc9d5ce7)
+
+running 4 tests
+test n4_nufft_psm_equals_v1_psm ... N4 wire  m=1 layer 1: rel L2 = 2.861e-12
+N4 pins  m=1 layer 1: rel L2 = 3.286e-13
+N4 pins  m=1 layer 2: rel L2 = 5.883e-14
+N4 pins  m=1 layer 3: rel L2 = 5.246e-13
+N4 plane m=1 layer 1: rel L2 = 2.481e-13
+N4 plane m=1 layer 2: rel L2 = 1.207e-13
+N4 plane m=1 layer 3: rel L2 = 7.405e-13
+N4 pins  m=4 layer 1: rel L2 = 5.325e-14
+N4 pins  m=4 layer 2: rel L2 = 3.649e-14
+N4 pins  m=4 layer 3: rel L2 = 5.242e-13
+ok
+test n5_sq_self_convergence_and_kappa_choice ... N5 T2 kappa=1.0: rel L2 to kappa=6 per layer ["1.06e-7"] (worst 1.062e-7)
+N5 T2 kappa=1.5: rel L2 to kappa=6 per layer ["2.41e-12"] (worst 2.410e-12)
+N5 T2 kappa=2.0: rel L2 to kappa=6 per layer ["5.56e-13"] (worst 5.556e-13)
+N5 T2 kappa=3.0: rel L2 to kappa=6 per layer ["1.34e-13"] (worst 1.344e-13)
+N5 T2 kappa=4.0: rel L2 to kappa=6 per layer ["1.54e-13"] (worst 1.544e-13)
+N5 T3 kappa=1.0: rel L2 to kappa=6 per layer ["6.13e0", "4.36e-13"] (worst 6.130e0)
+N5 T3 kappa=1.5: rel L2 to kappa=6 per layer ["1.05e-9", "1.00e-13"] (worst 1.048e-9)
+N5 T3 kappa=2.0: rel L2 to kappa=6 per layer ["6.13e-10", "1.49e-13"] (worst 6.135e-10)
+N5 T3 kappa=3.0: rel L2 to kappa=6 per layer ["2.54e-10", "6.86e-14"] (worst 2.540e-10)
+N5 T3 kappa=4.0: rel L2 to kappa=6 per layer ["1.55e-10", "4.71e-14"] (worst 1.554e-10)
+N5 chosen default kappa (smallest passing): Some(2.0)
+ok
+test n8_point_location ... N8 T2 nufft-psm: z err 0.39 px, x err 0.40 px
+N8 T2 sq-psm   : z err 0.39 px, x err 0.40 px
+N8 T3 nufft-psm: z err 0.23 px, x err 0.40 px
+N8 T3 sq-psm   : z err 0.23 px, x err 0.40 px
+ok
+test n9_invalid_inputs_are_errors ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.79s
+
+     Running tests/t1_legacy_vs_octave.rs (target/release/deps/t1_legacy_vs_octave-e97e8496f502e638)
+
+running 1 test
+test t1_legacy_port_matches_octave ... wire   psm    layer 1 : nz= 682 rel.err=1.300e-15  max|dz|=0.0e0
+wire   mulok  layer 1 : nz= 573 rel.err=8.323e-16  max|dz|=0.0e0
+pins   psm    layer 1 : nz= 166 rel.err=9.546e-16  max|dz|=0.0e0
+pins   psm    layer 2 : nz=  92 rel.err=4.863e-16  max|dz|=0.0e0
+pins   psm    layer 3 : nz=  70 rel.err=4.939e-16  max|dz|=0.0e0
+pins   mulok  layer 1 : nz= 125 rel.err=9.161e-16  max|dz|=0.0e0
+pins   mulok  layer 2 : nz=  70 rel.err=5.080e-16  max|dz|=0.0e0
+pins   mulok  layer 3 : nz=  53 rel.err=4.850e-16  max|dz|=0.0e0
+plane  psm    layer 1 : nz=  18 rel.err=7.294e-16  max|dz|=0.0e0
+plane  psm    layer 2 : nz=  92 rel.err=5.795e-16  max|dz|=0.0e0
+plane  psm    layer 3 : nz=  65 rel.err=5.327e-16  max|dz|=0.0e0
+plane  mulok  layer 1 : nz=  14 rel.err=8.855e-16  max|dz|=0.0e0
+plane  mulok  layer 2 : nz=  70 rel.err=5.958e-16  max|dz|=0.0e0
+plane  mulok  layer 3 : nz=  49 rel.err=5.477e-16  max|dz|=0.0e0
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.02s
+
+     Running tests/t2_t3_t6_oracles.rs (target/release/deps/t2_t3_t6_oracles-e5bd968c67f729e0)
+
+running 3 tests
+test t2_single_layer_point_scatterer ... legacy psm                   peak z=40.3829 mm (err 0.39 px)  x=32.0000 mm (err 0.40 px)
+psm accurate                 peak z=40.3829 mm (err 0.39 px)  x=32.0000 mm (err 0.40 px)
+legacy mulok                 peak z=40.2067 mm (err 0.38 px)  x=32.0000 mm (err 0.40 px)
+mulok thesis                 peak z=40.3829 mm (err 0.39 px)  x=32.0000 mm (err 0.40 px)
+mulok accurate               peak z=40.3829 mm (err 0.39 px)  x=32.0000 mm (err 0.40 px)
+ok
+test t3_two_layer_point_scatterer ... legacy psm (2 layers)        peak z=45.2100 mm (err 0.23 px)  x=32.0000 mm (err 0.40 px)
+psm accurate (2 layers)      peak z=45.2100 mm (err 0.23 px)  x=32.0000 mm (err 0.40 px)
+mulok thesis (2 layers)      peak z=45.2100 mm (err 0.23 px)  x=32.0000 mm (err 0.40 px)
+mulok accurate (2 layers)    peak z=45.2100 mm (err 0.23 px)  x=32.0000 mm (err 0.40 px)
+ok
+test t6_invalid_inputs_are_errors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/t7_t8_cpsm_envelope.rs (target/release/deps/t7_t8_cpsm_envelope-991321684aca22ef)
+
+running 2 tests
+test t7_cpsm_matches_octave ... cpsm haun: rel.err = 5.769e-16 (nr=97)
+cpsm gardner: rel.err = 5.812e-16 (nr=97)
+ok
+test t8_envelope_of_gaussian_burst ... envelope max abs error = 1.810e-14
+ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.27s
+
+   Doc-tests synaptus
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+exit 0

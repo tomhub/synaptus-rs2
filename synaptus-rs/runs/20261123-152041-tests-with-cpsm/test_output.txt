@@ -1,0 +1,68 @@
+    Finished `release` profile [optimized] target(s) in 0.01s
+     Running unittests src/lib.rs (target/release/deps/synaptus-16a3d2635138fa2c)
+
+running 4 tests
+test grid::tests::nextpow2_matches_matlab_semantics ... ok
+test grid::tests::signed_index_even_odd ... ok
+test kernels::tests::kz_formulas_agree_away_from_cutoff_and_mask_evanescent ... ok
+test kernels::tests::neumaier_beats_naive_on_cancellation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/t1_legacy_vs_octave.rs (target/release/deps/t1_legacy_vs_octave-803cbcb827bd2992)
+
+running 1 test
+test t1_legacy_port_matches_octave ... wire   psm    layer 1 : nz= 682 rel.err=1.300e-15  max|dz|=0.0e0
+wire   mulok  layer 1 : nz= 573 rel.err=8.323e-16  max|dz|=0.0e0
+pins   psm    layer 1 : nz= 166 rel.err=9.546e-16  max|dz|=0.0e0
+pins   psm    layer 2 : nz=  92 rel.err=4.863e-16  max|dz|=0.0e0
+pins   psm    layer 3 : nz=  70 rel.err=4.939e-16  max|dz|=0.0e0
+pins   mulok  layer 1 : nz= 125 rel.err=9.161e-16  max|dz|=0.0e0
+pins   mulok  layer 2 : nz=  70 rel.err=5.080e-16  max|dz|=0.0e0
+pins   mulok  layer 3 : nz=  53 rel.err=4.850e-16  max|dz|=0.0e0
+plane  psm    layer 1 : nz=  18 rel.err=7.294e-16  max|dz|=0.0e0
+plane  psm    layer 2 : nz=  92 rel.err=5.795e-16  max|dz|=0.0e0
+plane  psm    layer 3 : nz=  65 rel.err=5.327e-16  max|dz|=0.0e0
+plane  mulok  layer 1 : nz=  14 rel.err=8.855e-16  max|dz|=0.0e0
+plane  mulok  layer 2 : nz=  70 rel.err=5.958e-16  max|dz|=0.0e0
+plane  mulok  layer 3 : nz=  49 rel.err=5.477e-16  max|dz|=0.0e0
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.98s
+
+     Running tests/t2_t3_t6_oracles.rs (target/release/deps/t2_t3_t6_oracles-01b179fe65a15c9c)
+
+running 3 tests
+test t2_single_layer_point_scatterer ... legacy psm                   peak z=40.3829 mm (err 0.39 px)  x=32.0000 mm (err 0.40 px)
+psm accurate                 peak z=40.3829 mm (err 0.39 px)  x=32.0000 mm (err 0.40 px)
+legacy mulok                 peak z=40.2067 mm (err 0.38 px)  x=32.0000 mm (err 0.40 px)
+mulok thesis                 peak z=40.3829 mm (err 0.39 px)  x=32.0000 mm (err 0.40 px)
+mulok accurate               peak z=40.3829 mm (err 0.39 px)  x=32.0000 mm (err 0.40 px)
+ok
+test t3_two_layer_point_scatterer ... legacy psm (2 layers)        peak z=45.2100 mm (err 0.23 px)  x=32.0000 mm (err 0.40 px)
+psm accurate (2 layers)      peak z=45.2100 mm (err 0.23 px)  x=32.0000 mm (err 0.40 px)
+mulok thesis (2 layers)      peak z=45.2100 mm (err 0.23 px)  x=32.0000 mm (err 0.40 px)
+mulok accurate (2 layers)    peak z=45.2100 mm (err 0.23 px)  x=32.0000 mm (err 0.40 px)
+ok
+test t6_invalid_inputs_are_errors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/t7_t8_cpsm_envelope.rs (target/release/deps/t7_t8_cpsm_envelope-5b138af8db65f831)
+
+running 2 tests
+test t7_cpsm_matches_octave ... cpsm haun: rel.err = 5.769e-16 (nr=97)
+cpsm gardner: rel.err = 5.812e-16 (nr=97)
+ok
+test t8_envelope_of_gaussian_burst ... envelope max abs error = 1.810e-14
+ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.14s
+
+   Doc-tests synaptus
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+exit 0

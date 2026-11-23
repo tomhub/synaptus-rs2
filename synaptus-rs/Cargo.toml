@@ -1,0 +1,20 @@
+[package]
+name = "synaptus"
+version = "0.1.0"
+authors = ["Claude Opus 5.5 (Anthropic), guided by Tomas"]
+edition = "2021"
+description = "Rust port of the Synaptus Fourier-domain synthetic aperture ultrasound imaging algorithms (PSM, MULOK), with a legacy (MATLAB-faithful) mode and a thesis-faithful, accuracy-improved mode."
+license = "GPL-3.0-or-later"   # derivative of Synaptus (GPLv3)
+publish = false
+
+[dependencies]
+rustfft = "6.4.1"
+num-complex = "0.4.6"
+rayon = "1.10"
+
+[profile.release]
+# No fast-math-like flags; default IEEE semantics. Keep debug assertions off, overflow checks ON.
+overflow-checks = true
+
+[profile.test]
+opt-level = 3

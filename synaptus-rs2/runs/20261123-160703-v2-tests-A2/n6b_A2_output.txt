@@ -1,0 +1,26 @@
+t2    L1 (iz=  86, ix=128): |oracle|=1.828413e+03 |SQ-oracle|/max|SQ|=2.45e-14  oracle conv=3.5e-16  PASS
+t2    L1 (iz=  45, ix= 64): |oracle|=6.287936e-05 |SQ-oracle|/max|SQ|=3.93e-15  oracle conv=2.5e-17  PASS
+t2    L1 (iz=  90, ix=128): |oracle|=2.135735e+02 |SQ-oracle|/max|SQ|=7.31e-15  oracle conv=2.2e-16  PASS
+t2    L1 (iz= 135, ix=192): |oracle|=1.092812e-06 |SQ-oracle|/max|SQ|=3.26e-15  oracle conv=1.2e-16  PASS
+t3    L1 (iz=  72, ix=117): |oracle|=1.631992e-01 |SQ-oracle|/max|SQ|=4.08e-11  oracle conv=8.8e-13  PASS
+t3    L1 (iz=  18, ix= 64): |oracle|=1.952621e-03 |SQ-oracle|/max|SQ|=1.93e-11  oracle conv=8.0e-13  PASS
+t3    L1 (iz=  36, ix=128): |oracle|=6.116874e-03 |SQ-oracle|/max|SQ|=2.59e-11  oracle conv=1.6e-13  PASS
+t3    L1 (iz=  54, ix=192): |oracle|=3.143489e-03 |SQ-oracle|/max|SQ|=1.49e-11  oracle conv=8.2e-13  PASS
+t3    L2 (iz=  39, ix=128): |oracle|=2.266166e+03 |SQ-oracle|/max|SQ|=2.18e-14  oracle conv=2.5e-17  PASS
+t3    L2 (iz=  16, ix= 64): |oracle|=4.029671e-05 |SQ-oracle|/max|SQ|=4.79e-15  oracle conv=3.3e-17  PASS
+t3    L2 (iz=  33, ix=128): |oracle|=2.340151e+01 |SQ-oracle|/max|SQ|=2.31e-15  oracle conv=1.9e-16  PASS
+t3    L2 (iz=  49, ix=192): |oracle|=7.312024e-07 |SQ-oracle|/max|SQ|=2.89e-15  oracle conv=3.6e-18  PASS
+pins  L1 (iz= 165, ix=  3): |oracle|=1.851853e+05 |SQ-oracle|/max|SQ|=3.19e-14  oracle conv=2.8e-15  PASS
+pins  L1 (iz=  41, ix= 27): |oracle|=2.885280e+03 |SQ-oracle|/max|SQ|=2.59e-14  oracle conv=2.2e-16  PASS
+pins  L1 (iz=  83, ix= 55): |oracle|=3.868160e+02 |SQ-oracle|/max|SQ|=4.28e-14  oracle conv=2.3e-16  PASS
+pins  L1 (iz= 124, ix= 83): |oracle|=1.759928e+03 |SQ-oracle|/max|SQ|=1.63e-14  oracle conv=7.7e-16  PASS
+pins  L2 (iz=  19, ix= 19): |oracle|=1.965526e+05 |SQ-oracle|/max|SQ|=1.89e-14  oracle conv=2.5e-15  PASS
+pins  L2 (iz=  23, ix= 27): |oracle|=8.470582e+02 |SQ-oracle|/max|SQ|=3.16e-14  oracle conv=5.6e-16  PASS
+pins  L2 (iz=  46, ix= 55): |oracle|=3.407381e+02 |SQ-oracle|/max|SQ|=1.86e-14  oracle conv=4.3e-16  PASS
+pins  L2 (iz=  69, ix= 83): |oracle|=1.827103e+03 |SQ-oracle|/max|SQ|=1.87e-14  oracle conv=5.5e-16  PASS
+pins  L3 (iz=   2, ix= 34): |oracle|=1.735531e+05 |SQ-oracle|/max|SQ|=9.14e-14  oracle conv=3.0e-15  PASS
+pins  L3 (iz=  17, ix= 27): |oracle|=5.665856e+03 |SQ-oracle|/max|SQ|=2.13e-14  oracle conv=8.0e-16  PASS
+pins  L3 (iz=  35, ix= 55): |oracle|=5.319841e+03 |SQ-oracle|/max|SQ|=2.82e-15  oracle conv=1.1e-15  PASS
+pins  L3 (iz=  52, ix= 83): |oracle|=6.407631e+03 |SQ-oracle|/max|SQ|=5.00e-14  oracle conv=1.4e-15  PASS
+N6b overall: PASS
+exit 0

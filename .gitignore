@@ -1,0 +1,19 @@
+# The original Synaptus repository: clone it here yourself (see README), never commit it
+/synaptus/
+
+# Build outputs, environments, caches
+target/
+.venv/
+__pycache__/
+*.pyc
+
+# Data exported from the original datasets and intermediate figure arrays (regenerate, see README)
+synaptus-rs/data/
+synaptus-rs/figures/data/
+synaptus-rs2/data
+synaptus-rs2/figures/data/
+
+# Local leftovers (the Claude skill pack is not part of this repository)
+.claude/
+*.zip
+.DS_Store

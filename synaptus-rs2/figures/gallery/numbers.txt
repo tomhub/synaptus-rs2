@@ -1,0 +1,6 @@
+pipe_cscan_rel_l2 2.9293e-02
+wire_err_max 9.5431e-04
+wire_err_top10pct 1.3348e-04
+wire_err_bottom10pct 6.9158e-04
+pins_E_original_mulok 3.0422e-02
+pins_E_default_mulok 6.0531e-04

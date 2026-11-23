@@ -1,0 +1,12 @@
+0 Legacy Recursive Naive nz=842 time=0.025
+1 Legacy Recursive Neumaier nz=842 time=0.025
+2 Legacy Direct Naive nz=842 time=0.036
+3 Legacy Direct Neumaier nz=842 time=0.039
+4 Legacy Reanchored(16) Naive nz=842 time=0.029
+5 Legacy Reanchored(16) Neumaier nz=842 time=0.026
+6 Factored Recursive Naive nz=842 time=0.024
+7 Factored Recursive Neumaier nz=842 time=0.025
+8 Factored Direct Naive nz=842 time=0.037
+9 Factored Direct Neumaier nz=842 time=0.038
+10 Factored Reanchored(16) Naive nz=842 time=0.024
+11 Factored Reanchored(16) Neumaier nz=842 time=0.027

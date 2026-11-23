@@ -1,0 +1,464 @@
+<title>Chasing the Fourth Digit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column on engineering paper; a full-width log ruler is the single loud object, charts sit quietly in the column. */
+:root {
+  --paper: #f3f6f5;
+  --surface: #ffffff;
+  --ink: #14201d;
+  --ink-2: #44524e;
+  --ink-3: #6a7874;
+  --line: #d6dfdb;
+  --grid: #e5ebe9;
+  --v1: #2a78d6;        /* first Rust implementation (and the original it ports) */
+  --v1-text: #1f5fae;
+  --v2: #eb6834;        /* second Rust implementation */
+  --v2-text: #b4441a;
+  --ds-wire: #6250d6;
+  --ds-pins: #eda100;
+  --ds-plane: #1baf7a;
+  --model: #9b1b46;     /* the physics the model leaves out */
+  --ref: #6a7874;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --step--1: 0.82rem;
+  --step-0: 1rem;
+  --step-1: 1.2rem;
+  --step-2: 1.55rem;
+  --step-3: clamp(1.8rem, 3.6vw, 2.4rem);
+  --step-4: clamp(2.5rem, 7.5vw, 5rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #0f1514; --surface: #161e1c; --ink: #e7eeeb; --ink-2: #b4c1bd; --ink-3: #8a9894; --line: #283431; --grid: #1f2926;
+    --v1: #3987e5; --v1-text: #7fb2f0; --v2: #d95926; --v2-text: #f39466;
+    --ds-wire: #9085e9; --ds-pins: #c98500; --ds-plane: #199e70; --model: #f06b95; --ref: #8a9894;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0f1514; --surface: #161e1c; --ink: #e7eeeb; --ink-2: #b4c1bd; --ink-3: #8a9894; --line: #283431; --grid: #1f2926;
+  --v1: #3987e5; --v1-text: #7fb2f0; --v2: #d95926; --v2-text: #f39466;
+  --ds-wire: #9085e9; --ds-pins: #c98500; --ds-plane: #199e70; --model: #f06b95; --ref: #8a9894;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 1080px; margin: 0 auto; padding-block: 3rem 4rem; display: grid; gap: 4.5rem; }
+section { display: grid; gap: 1.4rem; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; line-height: 1.04; }
+h1 { font-size: var(--step-4); font-weight: 900; font-stretch: 118%; letter-spacing: -0.02em; }
+h2 { font-size: var(--step-3); font-weight: 800; font-stretch: 112%; }
+h3 { font-size: var(--step-1); font-weight: 700; font-stretch: 105%; }
+p { margin: 0; max-width: 66ch; color: var(--ink-2); }
+.lede { font-size: var(--step-1); }
+.eyebrow { font: 600 var(--step--1) var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.mono, code { font-family: var(--font-mono); font-size: 0.92em; }
+.num { font-variant-numeric: tabular-nums; }
+.v1 { color: var(--v1-text); font-weight: 600; }
+.v2 { color: var(--v2-text); font-weight: 600; }
+.head { display: grid; gap: 0.7rem; }
+
+/* ruler */
+.ruler-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 0.5rem 0.25rem; }
+.ruler-wrap svg { display: block; min-width: 860px; width: 100%; height: auto; }
+.ruler-key { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; font-size: var(--step--1); color: var(--ink-3); }
+.ruler-key span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.sw { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+/* method cards */
+.methods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.2rem 1.3rem; display: grid; gap: 0.6rem; align-content: start; }
+.card .tag { font: 600 var(--step--1) var(--font-mono); color: var(--v2-text); }
+.card p { font-size: 0.96rem; }
+.card .src { font-size: var(--step--1); color: var(--ink-3); }
+
+/* charts */
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1rem; display: grid; gap: 0.8rem; position: relative; }
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tab { font: 600 var(--step--1) var(--font-body); padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink-2); }
+.tab[aria-selected="true"] { border-color: var(--ink); color: var(--ink); }
+.tab:focus-visible, summary:focus-visible { outline: 3px solid var(--v1); outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; font-size: var(--step--1); color: var(--ink-3); align-items: center; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); font: 500 0.8rem/1.4 var(--font-mono); padding: 0.45rem 0.6rem; border-radius: 6px; white-space: nowrap; z-index: 5; }
+.note { font-size: var(--step--1); color: var(--ink-3); }
+
+/* error maps */
+.maps { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.8rem; }
+.map { display: grid; gap: 0.35rem; align-content: start; }
+.map img { width: 100%; border-radius: 8px; image-rendering: pixelated; background: #0a1020; }
+.map .lbl { font-size: var(--step--1); color: var(--ink-2); line-height: 1.35; }
+.map .e { font: 600 var(--step--1) var(--font-mono); }
+.ramp { width: 180px; height: 10px; border-radius: 3px; }
+
+/* confessions */
+.confess { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
+.confess li { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--line); }
+.confess .kind { font: 600 var(--step--1) var(--font-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.confess h3 { margin-bottom: 0.3rem; }
+
+/* elephant */
+/* the cast: a stubborn badger and a bin-diving raccoon, drawn in CSS */
+.aside { display: flex; gap: 0.75rem; align-items: flex-start; max-width: 72ch; }
+.aside p { margin: 0; }
+.critter { flex: none; display: inline-flex; align-items: center; gap: 0.4rem; font: 600 0.78rem/1 var(--font-mono); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 0.2rem 0.6rem 0.2rem 0.2rem; white-space: nowrap; }
+.critter i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #2a2a2a; display: inline-block; }
+.critter.badger i { background: linear-gradient(90deg, #f4f4f0 0 22%, #1d1d1d 22% 40%, #f4f4f0 40% 60%, #1d1d1d 60% 78%, #f4f4f0 78%); }
+.critter.raccoon i { background: radial-gradient(circle at 34% 48%, #f4f4f0 0 9%, transparent 10%), radial-gradient(circle at 66% 48%, #f4f4f0 0 9%, transparent 10%), linear-gradient(180deg, #a9b0b3 0 34%, #1d1d1d 34% 62%, #a9b0b3 62%); }
+.shot { display: grid; gap: 0.5rem; }
+.shot img { width: 100%; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
+.shot figcaption { font-size: var(--step--1); color: var(--ink-2); max-width: 90ch; }
+.elephant { background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--model); border-radius: 6px 14px 14px 6px; padding: clamp(1.3rem, 4vw, 2.4rem); display: grid; gap: 1rem; }
+.elephant .big { font: 900 clamp(2.4rem, 7vw, 4.2rem)/1 var(--font-display); font-stretch: 120%; color: var(--model); }
+
+table { border-collapse: collapse; font-size: var(--step--1); width: 100%; }
+th, td { text-align: left; padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--line); }
+td.n { font-family: var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; }
+.tablewrap { overflow-x: auto; }
+details summary { cursor: pointer; font-size: var(--step--1); color: var(--ink-2); }
+footer { font-size: var(--step--1); color: var(--ink-3); display: grid; gap: 0.5rem; }
+footer p { color: var(--ink-3); max-width: 80ch; }
+
+@media (max-width: 720px) {
+  .methods { grid-template-columns: minmax(0, 1fr); }
+  .confess li { grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
+}
+</style>
+
+<main>
+  <header class="head">
+    <span class="eyebrow">Synaptus in Rust · second implementation · 2026-11-23</span>
+    <h1>Chasing the fourth digit</h1>
+    <p class="lede">We read the papers, found two ways to compute phase shift migration more exactly, and wrote Synaptus in Rust a second time. It worked. Then we put every error we measured on one ruler, including the one we cannot fix with arithmetic.</p>
+  </header>
+
+  <section aria-labelledby="ruler-h">
+    <div class="head">
+      <h2 id="ruler-h">Every error, one ruler</h2>
+      <p>Relative error on a log scale, from the last bit of a double to 100%. Blue marks belong to the first Rust implementation (v1) and the original code it ports, orange to the second (v2). "The limit" is the exact ω-integral that phase shift migration approximates.</p>
+    </div>
+    <div class="ruler-wrap"><svg id="ruler" viewBox="0 0 1100 360" role="img" aria-label="Log-scale ruler of all measured errors, from 1e-16 to 1"></svg></div>
+    <div class="aside"><span class="critter badger"><i></i>badger</span><p>The badger insisted that the magenta mark be labelled a different quantity. It is not an image error, and comparing it like one would be cheating. Badgers do not cheat; they just dig until you give up.</p></div>
+    <div class="ruler-key">
+      <span><i class="sw" style="background:var(--v1)"></i>v1 and the original</span>
+      <span><i class="sw" style="background:var(--v2)"></i>v2</span>
+      <span><i class="sw" style="background:transparent;border:2px solid var(--v2)"></i>v2 graded by itself</span>
+      <span><i class="sw" style="background:var(--model)"></i>a different quantity: what the physics model leaves out</span>
+    </div>
+  </section>
+
+  <section aria-labelledby="what-h">
+    <div class="head">
+      <span class="eyebrow">Three papers and a substitution</span>
+      <h2 id="what-h">What v2 changes</h2>
+      <p>In 2011 the MULOK paper called an interpolation-free mapping from frequency to depth "a subject for future work". A good nonuniform FFT library appeared in 2019. We are fashionably late, and we kept v1 untouched next to v2 so nobody has to take our word for it.</p>
+    </div>
+    <div class="methods">
+      <div class="card">
+        <span class="tag">A · NUFFT-PSM</span>
+        <h3>The same sum, without the slow loop</h3>
+        <p>Phase shift migration adds up frequency samples once for every depth. For layered media that sum is exactly a nonuniform Fourier transform, so a NUFFT evaluates it with no interpolation and no Jacobian. It matches v1 to <b class="num" id="f-n4"></b>. The MULOK defects found in v1 have nothing to attach to.</p>
+        <span class="src">Barnett, Magland &amp; af Klinteberg, SIAM J. Sci. Comput. 41 (2019). Skjelvareid et al., IEEE TUFFC 58 (2011).</span>
+      </div>
+      <div class="card">
+        <span class="tag">B · SQ-PSM</span>
+        <h3>The integral that PSM approximates</h3>
+        <p>PSM's frequency sum is a rectangle rule, so its error shrinks only like 1/m as the time record is padded m-fold. After substituting ω = ω* + s² the integrand has no branch point, and Gauss–Legendre converges geometrically. A second NUFFT supplies the spectrum at the nodes. Our own derivation; we found no paper doing this for migration.</p>
+        <span class="src">Trefethen, SIAM Rev. 50 (2008), Thm 4.5. Dossier §5.</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="score-h">
+    <div class="head">
+      <span class="eyebrow">Scoreboard</span>
+      <h2 id="score-h">Distance to the limit, and what it costs</h2>
+      <p>Envelope error E against SQ-PSM with twice the default nodes. Time is the median of 5 runs on one 16-thread laptop, so read it as indicative. SQ-PSM's own row is hollow because it is compared with itself; its real evidence is the oracle check further down.</p>
+    </div>
+    <div class="chart" id="score">
+      <div class="tabs" role="tablist" id="score-tabs"></div>
+      <svg id="score-svg" viewBox="0 0 1000 400" aria-label="Dot plot of envelope error per method"></svg>
+      <div class="legend"><span><i class="sw" style="background:var(--v1)"></i>v1</span><span><i class="sw" style="background:var(--v2)"></i>v2</span><span><i class="sw" style="border:2px solid var(--v2)"></i>graded by itself</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pad-h">
+    <div class="head">
+      <span class="eyebrow">Padding is not a plan</span>
+      <h2 id="pad-h">More zeros help, mostly</h2>
+      <p>v1 PSM with the time record padded m-fold, against the limit. All three datasets fall roughly like 1/m, which is what a rectangle rule with misaligned band edges predicts. Twice, doubling the padding made things worse: pins from 4× to 8×, plane from 8× to 16×. The band edges land on the frequency grid differently each time, so there is no reliable rate to extrapolate.</p>
+    </div>
+    <div class="chart" id="pad">
+      <svg id="pad-svg" viewBox="0 0 1000 420" aria-label="Error versus padding factor for three datasets"></svg>
+      <div class="legend" id="pad-legend"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="maps-h">
+    <div class="head">
+      <span class="eyebrow">Where the error lives</span>
+      <h2 id="maps-h">Error maps, same scale for everyone</h2>
+      <p>|envelope − scaled reference| at every pixel, as a fraction of the brightest pixel, from 10⁻¹⁰ (black) to 10⁻¹ (pale). Layers are drawn at their true thickness. The last panel is black because SQ-PSM is being compared with itself, which proves only that it agrees with itself.</p>
+    </div>
+    <div class="chart">
+      <div class="tabs" role="tablist" id="map-tabs"></div>
+      <div class="maps" id="maps"></div>
+      <div class="legend"><span>10⁻¹⁰</span><span class="ramp" id="ramp"></span><span>10⁻¹ of peak</span><span id="map-z"></span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="fix-h">
+    <div class="head">
+      <span class="eyebrow">Bugs, switched off</span>
+      <h2 id="fix-h">The original's bugs no longer run by default</h2>
+      <p>Both Rust versions keep a faithful copy of the original code, bugs and all, under <code>legacy::</code>, because you cannot measure a fix without the thing it fixes. Nothing calls those copies unless you ask for them by name. Everything else, including every default, runs the corrected algorithms.</p>
+    </div>
+    <div class="aside"><span class="critter raccoon"><i></i>raccoon</span><p>The raccoon went through the original's frequency bins, as raccoons do with bins, and found a Stolt factor applied twice, a depth grid missing its bottom end, and a frequency axis labelled ¾ of a bin off. In the cylindrical code it found a 64° arc treated as a full circle, evanescent waves let in with zero phase, and a DC bin nobody asked for.</p></div>
+    <figure class="shot" style="margin:0">
+      <img id="g-pins" alt="Pins dataset: original MULOK, default MULOK and SQ-PSM images, plus error maps for original and default MULOK">
+      <figcaption id="g-pins-cap"></figcaption>
+    </figure>
+    <figure class="shot" style="margin:0">
+      <img id="g-pipe" alt="Objects in a pipe: amplitude C-scans from the original CPSM and the corrected default, plus their difference">
+      <figcaption id="g-pipe-cap"></figcaption>
+    </figure>
+    <div class="aside"><span class="critter badger"><i></i>badger</span><p>The badger points out that fixing CPSM did not make it visibly sharper: on synthetic scatterers, old and new both land within half a sample. The fix buys correctness, not a makeover. The full gallery, with the thesis figures alongside, is in <code>synaptus-rs2/FIGURES.md</code>.</p></div>
+  </section>
+
+  <section aria-labelledby="conf-h">
+    <div class="head">
+      <span class="eyebrow">Things that went wrong</span>
+      <h2 id="conf-h">The parts we would rather not mention</h2>
+    </div>
+    <ul class="confess">
+      <li><span class="kind">our bug</span><div><h3>Our own node count forgot the time delay</h3><p>The quadrature rule assumed the integrand oscillates no faster than the FFT period allows. The delay before the first sample adds its own oscillation, and in shallow layers nothing cancels it. Our self-convergence test caught it on synthetic data: the shallow layer passed by a hair. Fixed as amendment A2. The run before the fix is kept.</p></div></li>
+      <li><span class="kind">inconclusive</span><div><h3>The referee needed extra time</h3><p>The independent Python oracle agreed with SQ-PSM at 21 of 24 pixels on the first try. At the other 3 the oracle itself had not converged, so those are recorded as inconclusive, not passed. A finer oracle, run as a separately labelled follow-up, then agreed at <b id="f-n6b"></b>.</p></div></li>
+      <li><span class="kind">v1's ruler</span><div><h3>v1 graded itself with a bent ruler</h3><p>v1 measured its accuracy against PSM with 8× padding. That reference turns out to sit <b class="num" id="f-v1ref"></b> from the limit. The v1 conclusions survive, but some of its decimals do not: accurate MULOK is <b class="num" id="f-acc"></b> from the limit, not the 4.7e-4 v1 reported for pins.</p></div></li>
+      <li><span class="kind">same author</span><div><h3>The oracle and the method share a parent</h3><p>The oracle uses a different quadrature, no substitution and no NUFFT, but the same person wrote both, from the same definition. A shared misreading of that definition would slip through. That NUFFT-PSM matches v1, which matches the original Octave code, and that padded PSM converges to SQ-PSM, both argue against it. Neither proves it.</p></div></li>
+      <li><span class="kind">anticlimax</span><div><h3>We fixed four things in CPSM and the picture barely moved</h3><p>Integer angular orders, no evanescent leak, no DC bin, a transfer function that agrees with the thesis' own asymptotics. The pipe image's brightness changes by <b class="num" id="f-pipe"></b> and almost nothing moves. Correct and boring beats wrong and exciting, but it makes for a poor trailer.</p></div></li>
+      <li><span class="kind">untested</span><div><h3>3D got less scrutiny</h3><p>SQ-PSM in 3D (the plane scan) is checked only by the convergence test and the scoreboard, not by the pixel oracle.</p></div></li>
+    </ul>
+  </section>
+
+  <section class="elephant" aria-labelledby="ele-h">
+    <span class="eyebrow">The elephant</span>
+    <h2 id="ele-h">The arithmetic is now far better than the physics</h2>
+    <div class="big num">≈ 6%</div>
+    <p>The MULOK paper notes that transmission through an interface depends on angle, varying by about 6% across the beam in its copper example. PSM and MULOK treat it as constant. They also assume scalar waves, no attenuation and an exploding reflector. SQ-PSM agrees with itself to <b class="num" id="f-sq"></b> about a model that may be wrong in its second digit on real specimens. We have not measured how wrong on these datasets. That is the next honest piece of work, and no amount of Gauss–Legendre will do it. The badger and the raccoon have both tried pushing the elephant. It did not move.</p>
+  </section>
+
+  <section aria-labelledby="data-h">
+    <details>
+      <summary id="data-h">Show the numbers as tables</summary>
+      <div class="tablewrap" id="tables"></div>
+    </details>
+  </section>
+
+  <footer>
+    <p>Status: tested by the implementer; independent verification pending. Pass marks were fixed before the tests ran (TEST_PLAN_V2.md, with amendments A1 and A2). Results: ACCURACY_V2.md and the run directories it cites. Research: research/synaptus-v2-improvements-2026-11-23.md.</p>
+    <p>Original: Synaptus by M. H. Skjelvareid, JOSS 2022, doi:10.21105/joss.04185. GPL-3.0-or-later. Written by Claude Opus 5.5, guided by Tomas.</p>
+  </footer>
+</main>
+
+<script>
+/*__DATA__*/
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const sci = (v, d = 1) => { const e = Math.floor(Math.log10(v)); return `${(v / 10 ** e).toFixed(d)}e${e}`; };
+  const supE = e => String(e).replace("-", "−");
+  const F = D.facts;
+  const set = (id, t) => { document.getElementById(id).textContent = t; };
+  set("f-n4", `${sci(F.n4_worst)} or better`);
+  set("f-n6b", `all ${F.n6b_total} pixels, within ${sci(F.n6b_worst)} of the layer maximum`);
+  set("f-v1ref", `${sci(F.v1_ref[0])} to ${sci(F.v1_ref[1])}`);
+  set("f-acc", `${sci(F.acc_mulok[0])} to ${sci(F.acc_mulok[1])}`);
+  set("f-sq", sci(F.sq_self));
+  const G = D.gallery;
+  document.getElementById("g-pins").src = G.pins_png;
+  document.getElementById("g-pipe").src = G.pipe_png;
+  set("g-pins-cap", `Pins in water, plexiglass and aluminium. The first three panels look alike at −40 dB, which is how bugs like these survive. The error maps disagree: the original MULOK is ${sci(G.pins_orig)} from the exact integral, with its error sitting on every interface and pin and a V-shaped ghost in the aluminium; the default MULOK is ${sci(G.pins_def)}, about ${Math.round(G.pins_orig / G.pins_def)}× smaller and spread like noise.`);
+  set("g-pipe-cap", `Objects in a pipe. Original cpsm.m against the corrected default: the C-scans differ by ${(G.pipe_total * 100).toFixed(1)}% (each normalised to its peak), ${(G.pipe_fixes * 100).toFixed(1)}% from the three fixes and ${(G.pipe_transfer * 100).toFixed(1)}% from the transfer function (they overlap). Only ${(G.pipe_moved * 100).toFixed(1)}% of the bright pixels change their range sample.`);
+  set("f-pipe", `${(G.pipe_total * 100).toFixed(1)}%`);
+
+  // ---------- tooltip ----------
+  function tipFor(container) {
+    const tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; container.appendChild(tip);
+    return {
+      show(evt, text) { tip.textContent = text; tip.hidden = false; const r = container.getBoundingClientRect(); let x = evt.clientX - r.left + 12, y = evt.clientY - r.top + 12; tip.style.left = Math.min(x, r.width - tip.offsetWidth - 8) + "px"; tip.style.top = y + "px"; },
+      hide() { tip.hidden = true; }
+    };
+  }
+
+  // ---------- ruler ----------
+  (function ruler() {
+    const svg = document.getElementById("ruler");
+    const X0 = 40, X1 = 1060, AY = 180;
+    const x = v => X0 + (Math.log10(v) + 16) / 16 * (X1 - X0);
+    for (let e = -16; e <= 0; e++) {
+      el("line", { x1: x(10 ** e), x2: x(10 ** e), y1: AY - 5, y2: AY + 5, stroke: "var(--ink-3)", "stroke-width": 1 }, svg);
+      if (e % 2 === 0) { const t = el("text", { x: x(10 ** e), y: AY + 20, "text-anchor": "middle", "font-size": 11, fill: "var(--ink-3)", "font-family": "IBM Plex Mono, monospace" }, svg); t.textContent = e === 0 ? "1" : `1e${e}`; }
+    }
+    el("line", { x1: X0, x2: X1, y1: AY, y2: AY, stroke: "var(--ink)", "stroke-width": 1.5 }, svg);
+    const M = [
+      { v: 1.11e-16, label: "unit roundoff of a double", who: "ref" },
+      { v: F.t1_worst, label: "v1 Rust vs the original Octave code", who: "v1" },
+      { v: F.sq_self, label: "SQ-PSM vs itself (2× nodes)", who: "self" },
+      { v: F.nufft_worst, label: "NUFFT vs direct sum", who: "v2" },
+      { v: F.n4_worst, label: "NUFFT-PSM vs v1 PSM", who: "v2" },
+      { v: F.n6b_worst, label: "SQ-PSM vs independent oracle", who: "v2" },
+      { r: F.v1_ref, label: "v1's reference (PSM, 8× pad) vs limit", who: "v1" },
+      { r: F.acc_mulok, label: "v1 accurate MULOK vs limit", who: "v1" },
+      { r: F.v1_psm, label: "v1 PSM default vs limit", who: "v1" },
+      { r: F.leg_mulok, label: "original MULOK vs limit", who: "v1" },
+      { v: 0.06, label: "angle-dependent transmission, ignored", who: "model" },
+    ];
+    const col = w => ({ v1: "var(--v1)", v2: "var(--v2)", self: "var(--v2)", model: "var(--model)", ref: "var(--ref)" })[w];
+    const rowsY = [AY - 38, AY + 58, AY - 80, AY + 100, AY - 122, AY + 142, AY - 164];
+    const used = rowsY.map(() => []);
+    const CW = 6.3;
+    M.forEach(m => {
+      const xa = m.r ? x(m.r[0]) : x(m.v), xb = m.r ? x(m.r[1]) : x(m.v);
+      const val = m.r ? `${sci(m.r[0])} – ${sci(m.r[1])}` : (m.who === "model" ? "≈6% (different metric)" : sci(m.v));
+      const w = Math.max(m.label.length, val.length) * CW + 8;
+      let lx = Math.min(Math.max(xa - 4, 4), 1096 - w);
+      let row = 0;
+      for (; row < rowsY.length; row++) { if (!used[row].some(([a, b]) => lx < b + 10 && lx + w > a - 10)) break; }
+      if (row === rowsY.length) row = rowsY.length - 1;
+      used[row].push([lx, lx + w]);
+      const ly = rowsY[row];
+      const c = col(m.who);
+      const above = ly < AY;
+      el("line", { x1: (xa + xb) / 2, x2: (xa + xb) / 2, y1: AY, y2: above ? ly + 6 : ly - 26, stroke: c, "stroke-width": 1, "stroke-dasharray": m.who === "model" ? "3 3" : "none" }, svg);
+      if (m.r) el("line", { x1: xa, x2: Math.max(xb, xa + 3), y1: AY, y2: AY, stroke: c, "stroke-width": 9, "stroke-linecap": "round" }, svg);
+      else el("circle", { cx: xa, cy: AY, r: 6.5, fill: m.who === "self" ? "var(--surface)" : c, stroke: m.who === "self" ? c : "var(--surface)", "stroke-width": 2.5 }, svg);
+      const t1 = el("text", { x: lx, y: ly - 8, "font-size": 12, fill: "var(--ink)", "font-family": "IBM Plex Sans, sans-serif", "font-weight": 500 }, svg); t1.textContent = m.label;
+      const t2 = el("text", { x: lx, y: ly + 7, "font-size": 11.5, fill: c, "font-family": "IBM Plex Mono, monospace", "font-weight": 600 }, svg); t2.textContent = val;
+    });
+    const t = el("text", { x: X0, y: 352, "font-size": 11, fill: "var(--ink-3)", "font-family": "IBM Plex Sans, sans-serif" }, svg);
+    t.textContent = "Ranges span the wire, pins and plane datasets. The magenta mark is an amplitude variation from the MULOK paper, not an image error: it shows scale, not a like-for-like comparison.";
+  })();
+
+  // ---------- scoreboard ----------
+  (function score() {
+    const svg = document.getElementById("score-svg"), tabs = document.getElementById("score-tabs");
+    const tip = tipFor(document.getElementById("score"));
+    const datasets = ["wire", "pins", "plane"];
+    let cur = "wire";
+    const L = 250, R = 800, T = 34, ROW = 44;
+    const lo = -14, hi = -1;
+    const x = v => L + (Math.log10(v) - lo) / (hi - lo) * (R - L);
+    function draw() {
+      svg.innerHTML = "";
+      const rows = D.s1.filter(r => r.dataset === cur);
+      svg.setAttribute("viewBox", `0 0 1000 ${T + rows.length * ROW + 34}`);
+      for (let e = lo; e <= hi; e++) {
+        el("line", { x1: x(10 ** e), x2: x(10 ** e), y1: T - 10, y2: T + rows.length * ROW - 10, stroke: "var(--grid)", "stroke-width": 1 }, svg);
+        if (e % 2 === 0 || e === hi) { const t = el("text", { x: x(10 ** e), y: T + rows.length * ROW + 10, "text-anchor": "middle", "font-size": 11, fill: "var(--ink-3)", "font-family": "IBM Plex Mono, monospace" }, svg); t.textContent = `1e${e}`; }
+      }
+      const h1 = el("text", { x: 890, y: 18, "text-anchor": "middle", "font-size": 11, fill: "var(--ink-3)", "font-family": "IBM Plex Sans, sans-serif" }, svg); h1.textContent = "median time";
+      const h2 = el("text", { x: L, y: 18, "font-size": 11, fill: "var(--ink-3)", "font-family": "IBM Plex Sans, sans-serif" }, svg); h2.textContent = "envelope error E vs the limit (log scale) →";
+      rows.forEach((r, i) => {
+        const y = T + i * ROW + 6;
+        const v2 = r.method.startsWith("v2"), self = r.method.startsWith("v2 SQ");
+        const c = v2 ? "var(--v2)" : "var(--v1)";
+        const lab = el("text", { x: L - 14, y: y + 4, "text-anchor": "end", "font-size": 13, fill: "var(--ink)", "font-family": "IBM Plex Sans, sans-serif" }, svg);
+        lab.textContent = r.method.replace(/^v[12] /, "").replace("(kappa=2)", "");
+        const gen = el("text", { x: 8, y: y + 4, "font-size": 11, fill: v2 ? "var(--v2-text)" : "var(--v1-text)", "font-family": "IBM Plex Mono, monospace", "font-weight": 600 }, svg); gen.textContent = v2 ? "v2" : "v1";
+        el("line", { x1: L, x2: x(r.E), y1: y, y2: y, stroke: c, "stroke-width": 2, opacity: 0.35 }, svg);
+        el("circle", { cx: x(r.E), cy: y, r: 8, fill: self ? "var(--surface)" : c, stroke: self ? c : "var(--surface)", "stroke-width": 2.5 }, svg);
+        const vt = el("text", { x: x(r.E) + 14, y: y + 4, "font-size": 12, fill: "var(--ink-2)", "font-family": "IBM Plex Mono, monospace" }, svg); vt.textContent = sci(r.E) + (self ? "  (vs itself)" : "");
+        const tt = el("text", { x: 890, y: y + 4, "text-anchor": "middle", "font-size": 12, fill: "var(--ink-2)", "font-family": "IBM Plex Mono, monospace" }, svg); tt.textContent = r.t < 1 ? `${(r.t * 1000).toFixed(0)} ms` : `${r.t.toFixed(2)} s`;
+        const hit = el("rect", { x: 0, y: y - ROW / 2, width: 1000, height: ROW, fill: "transparent" }, svg);
+        hit.addEventListener("mousemove", ev => tip.show(ev, `${r.method} · E ${sci(r.E, 2)} · time ${r.t.toFixed(3)} s [${r.tmin.toFixed(3)}–${r.tmax.toFixed(3)}]`));
+        hit.addEventListener("mouseleave", () => tip.hide());
+      });
+    }
+    datasets.forEach(d => { const b = document.createElement("button"); b.className = "tab"; b.type = "button"; b.setAttribute("role", "tab"); b.id = "score-tab-" + d; b.textContent = d; b.addEventListener("click", () => { cur = d; [...tabs.children].forEach(c => c.setAttribute("aria-selected", String(c === b))); draw(); }); tabs.appendChild(b); });
+    tabs.firstChild.setAttribute("aria-selected", "true");
+    draw();
+  })();
+
+  // ---------- padding convergence ----------
+  (function pad() {
+    const svg = document.getElementById("pad-svg");
+    const tip = tipFor(document.getElementById("pad"));
+    const L = 90, R = 860, T = 20, B = 360;
+    const ms = [1, 2, 4, 8, 16];
+    const x = m => L + Math.log2(m) / 4 * (R - L);
+    const lo = -5, hi = -1;
+    const y = v => B - (Math.log10(v) - lo) / (hi - lo) * (B - T);
+    for (let e = lo; e <= hi; e++) {
+      el("line", { x1: L, x2: R, y1: y(10 ** e), y2: y(10 ** e), stroke: "var(--grid)" }, svg);
+      const t = el("text", { x: L - 10, y: y(10 ** e) + 4, "text-anchor": "end", "font-size": 12, fill: "var(--ink-3)", "font-family": "IBM Plex Mono, monospace" }, svg); t.textContent = `1e${e}`;
+    }
+    ms.forEach(m => { const t = el("text", { x: x(m), y: B + 22, "text-anchor": "middle", "font-size": 12, fill: "var(--ink-3)", "font-family": "IBM Plex Mono, monospace" }, svg); t.textContent = `${m}×`; });
+    const xl = el("text", { x: (L + R) / 2, y: B + 46, "text-anchor": "middle", "font-size": 12, fill: "var(--ink-3)", "font-family": "IBM Plex Sans, sans-serif" }, svg); xl.textContent = "time-record padding m";
+    const yl = el("text", { x: 18, y: (T + B) / 2, "text-anchor": "middle", "font-size": 12, fill: "var(--ink-3)", transform: `rotate(-90 18 ${(T + B) / 2})`, "font-family": "IBM Plex Sans, sans-serif" }, svg); yl.textContent = "E vs the limit";
+    // 1/m guide through wire m=1
+    const w1 = D.n7.find(r => r.dataset === "wire" && r.m === 1).E;
+    el("line", { x1: x(1), y1: y(w1), x2: x(16), y2: y(w1 / 16), stroke: "var(--ink-3)", "stroke-dasharray": "5 5", "stroke-width": 1.5 }, svg);
+    const g = el("text", { x: x(16) + 8, y: y(w1 / 16) + 16, "font-size": 12, fill: "var(--ink-3)", "font-family": "IBM Plex Sans, sans-serif" }, svg); g.textContent = "1/m";
+    const shapes = { wire: "circle", pins: "square", plane: "triangle" };
+    const colors = { wire: "var(--ds-wire)", pins: "var(--ds-pins)", plane: "var(--ds-plane)" };
+    const mark = (s, cx, cy, c) => {
+      if (s === "circle") return el("circle", { cx, cy, r: 6, fill: c, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+      if (s === "square") return el("rect", { x: cx - 6, y: cy - 6, width: 12, height: 12, fill: c, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+      return el("path", { d: `M${cx} ${cy - 7} L${cx + 7} ${cy + 6} L${cx - 7} ${cy + 6} Z`, fill: c, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    };
+    const legend = document.getElementById("pad-legend");
+    // end labels: nudge apart when closer than 16 px
+    const ends = ["wire", "pins", "plane"].map(ds => ({ ds, y: y(D.n7.filter(r => r.dataset === ds).sort((a, b) => b.m - a.m)[0].E) })).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 16) ends[i].y = ends[i - 1].y + 16;
+    const endY = Object.fromEntries(ends.map(e => [e.ds, e.y]));
+    ["wire", "pins", "plane"].forEach(ds => {
+      const pts = D.n7.filter(r => r.dataset === ds).sort((a, b) => a.m - b.m);
+      el("path", { d: pts.map((p, i) => `${i ? "L" : "M"}${x(p.m)} ${y(p.E)}`).join(" "), fill: "none", stroke: colors[ds], "stroke-width": 2 }, svg);
+      pts.forEach(p => { const mk = mark(shapes[ds], x(p.m), y(p.E), colors[ds]); mk.addEventListener("mousemove", ev => tip.show(ev, `${ds} · m=${p.m} · E ${sci(p.E, 2)}`)); mk.addEventListener("mouseleave", () => tip.hide()); });
+      const last = pts[pts.length - 1];
+      const lab = el("text", { x: x(16) + 14, y: endY[ds] + 4, "font-size": 13, fill: "var(--ink)", "font-family": "IBM Plex Sans, sans-serif", "font-weight": 600 }, svg); lab.textContent = ds;
+      const s = document.createElement("span"); s.innerHTML = `<svg width="16" height="16" viewBox="-8 -8 16 16" aria-hidden="true">${shapes[ds] === "circle" ? '<circle r="6"' : shapes[ds] === "square" ? '<rect x="-6" y="-6" width="12" height="12"' : '<path d="M0 -7 L7 6 L-7 6 Z"'} fill="${colors[ds]}"/></svg>${ds}`; s.style.display = "inline-flex"; s.style.gap = "0.35rem"; s.style.alignItems = "center"; legend.appendChild(s);
+    });
+    // ring every point where doubling the padding increased the error
+    ["wire", "pins", "plane"].forEach(ds => {
+      const pts = D.n7.filter(r => r.dataset === ds).sort((a, b) => a.m - b.m);
+      pts.forEach((p, i) => { if (i && p.E > pts[i - 1].E) el("circle", { cx: x(p.m), cy: y(p.E), r: 13, fill: "none", stroke: "var(--ink)", "stroke-width": 1.5 }, svg); });
+    });
+    const ring = document.createElement("span"); ring.innerHTML = `<svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><circle r="7.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>ringed: doubling the padding made it worse`; ring.style.display = "inline-flex"; ring.style.gap = "0.35rem"; ring.style.alignItems = "center"; legend.appendChild(ring);
+  })();
+
+  // ---------- error maps ----------
+  (function maps() {
+    const tabs = document.getElementById("map-tabs"), box = document.getElementById("maps");
+    document.getElementById("ramp").style.background = D.err_ramp;
+    function draw(ds) {
+      box.innerHTML = "";
+      D.maps[ds].forEach(m => {
+        const d = document.createElement("figure"); d.className = "map"; d.style.margin = "0";
+        d.innerHTML = `<img alt="Error map: ${m.label}" src="${m.img}"><span class="lbl">${m.label}</span><span class="e" style="color:${m.who === "v2" ? "var(--v2-text)" : "var(--v1-text)"}">E = ${sci(m.E)}</span>`;
+        box.appendChild(d);
+      });
+      const z = D.maps[ds][1].z;
+      document.getElementById("map-z").textContent = `· depth ${z[0].toFixed(0)}–${z[1].toFixed(0)} mm, top to bottom`;
+    }
+    ["pins", "wire"].forEach((ds, i) => { const b = document.createElement("button"); b.className = "tab"; b.type = "button"; b.setAttribute("role", "tab"); b.id = "map-tab-" + ds; b.textContent = ds; b.setAttribute("aria-selected", String(i === 0)); b.addEventListener("click", () => { [...tabs.children].forEach(c => c.setAttribute("aria-selected", String(c === b))); draw(ds); }); tabs.appendChild(b); });
+    draw("pins");
+  })();
+
+  // ---------- tables ----------
+  (function tables() {
+    const t1 = `<table><thead><tr><th>dataset</th><th>method</th><th>E vs limit</th><th>median time [s]</th><th>min–max [s]</th></tr></thead><tbody>${D.s1.map(r => `<tr><td>${r.dataset}</td><td>${r.method}</td><td class="n">${sci(r.E, 2)}</td><td class="n">${r.t.toFixed(3)}</td><td class="n">${r.tmin.toFixed(3)}–${r.tmax.toFixed(3)}</td></tr>`).join("")}</tbody></table>`;
+    const t2 = `<table><thead><tr><th>dataset</th><th>padding m</th><th>E(PSM_m, limit)</th></tr></thead><tbody>${D.n7.map(r => `<tr><td>${r.dataset}</td><td class="n">${r.m}</td><td class="n">${sci(r.E, 2)}</td></tr>`).join("")}</tbody></table>`;
+    document.getElementById("tables").innerHTML = t1 + "<br>" + t2;
+  })();
+})();
+</script>

@@ -1,0 +1,6 @@
+    Finished `release` profile [optimized] target(s) in 0.01s
+     Running `target/release/examples/study_v2 runs/20261123-161018-v2-n7-s1`
+
+real	4m4.551s
+user	48m21.069s
+sys	1m41.109s

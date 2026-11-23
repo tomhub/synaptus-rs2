@@ -1,0 +1,3 @@
+grid offset code-true (in units of dOmega): -0.750000 (expected -(1-1/up) = -0.750000)
+max |Xup - X(grid_true)| = 2.739e-02   max |Xup - X(grid_code)| = 1.947e-01
+exact-sample check (every up-th sample equals input): 7.850e-16

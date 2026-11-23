@@ -1,0 +1,246 @@
+<title>Same Echoes, Fewer Bugs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one column on engineering paper; the drag-to-compare stage is the show, a badger and a raccoon heckle from the margins. */
+:root {
+  --paper: #f3f6f5;
+  --surface: #ffffff;
+  --ink: #14201d;
+  --ink-2: #44524e;
+  --ink-3: #6a7874;
+  --line: #d6dfdb;
+  --orig: #2f5fd0;      /* the original code */
+  --v2: #d9572a;        /* the second Rust implementation */
+  --good: #1d7f5c;
+  --sonar: #0b1424;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --step--1: 0.82rem; --step-0: 1rem; --step-1: 1.2rem;
+  --step-3: clamp(1.8rem, 3.6vw, 2.4rem); --step-4: clamp(2.5rem, 7.5vw, 4.8rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #0f1514; --surface: #161e1c; --ink: #e7eeeb; --ink-2: #b4c1bd; --ink-3: #8a9894; --line: #283431;
+    --orig: #87a6ff; --v2: #ff8a5c; --good: #56c99b;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0f1514; --surface: #161e1c; --ink: #e7eeeb; --ink-2: #b4c1bd; --ink-3: #8a9894; --line: #283431;
+  --orig: #87a6ff; --v2: #ff8a5c; --good: #56c99b;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+main { max-width: 1040px; margin: 0 auto; padding-block: 3rem 4rem; display: grid; gap: 4.2rem; }
+section { display: grid; gap: 1.3rem; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; line-height: 1.04; }
+h1 { font-size: var(--step-4); font-weight: 900; font-stretch: 118%; letter-spacing: -0.02em; }
+h1 .v { color: var(--v2); }
+h2 { font-size: var(--step-3); font-weight: 800; font-stretch: 112%; }
+h3 { font-size: var(--step-1); font-weight: 700; }
+p { margin: 0; max-width: 66ch; color: var(--ink-2); }
+.lede { font-size: var(--step-1); }
+.eyebrow { font: 600 var(--step--1) var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+code { font-family: var(--font-mono); font-size: 0.92em; }
+.num { font-variant-numeric: tabular-nums; }
+.o { color: var(--orig); font-weight: 600; } .w { color: var(--v2); font-weight: 600; }
+.head { display: grid; gap: 0.7rem; }
+
+/* critters */
+.aside { display: flex; gap: 0.75rem; align-items: flex-start; max-width: 72ch; }
+.critter { flex: none; display: inline-flex; align-items: center; gap: 0.4rem; font: 600 0.78rem/1 var(--font-mono); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 0.2rem 0.6rem 0.2rem 0.2rem; white-space: nowrap; }
+.critter i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #2a2a2a; display: inline-block; }
+.critter.badger i { background: linear-gradient(90deg, #f4f4f0 0 22%, #1d1d1d 22% 40%, #f4f4f0 40% 60%, #1d1d1d 60% 78%, #f4f4f0 78%); }
+.critter.raccoon i { background: radial-gradient(circle at 34% 48%, #f4f4f0 0 9%, transparent 10%), radial-gradient(circle at 66% 48%, #f4f4f0 0 9%, transparent 10%), linear-gradient(180deg, #a9b0b3 0 34%, #1d1d1d 34% 62%, #a9b0b3 62%); }
+
+/* wipe stage */
+.stage { display: grid; gap: 0.75rem; justify-items: center; }
+.wipe { position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: var(--sonar); touch-action: pan-y; user-select: none; box-shadow: 0 18px 40px -26px rgba(8, 20, 36, 0.6); }
+.wipe img { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+.wipe .top { clip-path: inset(0 0 0 var(--cut, 50%)); }
+.wipe .bar { position: absolute; top: 0; bottom: 0; left: var(--cut, 50%); width: 3px; margin-left: -1.5px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.25); pointer-events: none; }
+.wipe .knob { position: absolute; top: 50%; left: var(--cut, 50%); width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: #fff; display: grid; place-items: center; pointer-events: none; box-shadow: 0 4px 14px rgba(0,0,0,.35); color: #142231; font: 700 15px/1 var(--font-mono); }
+.wipe .tag { position: absolute; top: 10px; padding: 3px 10px; border-radius: 999px; font-size: var(--step--1); font-weight: 600; color: #fff; pointer-events: none; }
+.wipe .tag.l { left: 10px; background: #2f5fd0; } .wipe .tag.r { right: 10px; background: #c24a1f; }
+.wipe input[type="range"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+.wipe:has(input:focus-visible) { outline: 3px solid var(--orig); outline-offset: 3px; }
+.controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: center; }
+.btn { font: 600 var(--step--1) var(--font-body); padding: 0.5rem 1rem; border-radius: 999px; cursor: pointer; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn:focus-visible, .tab:focus-visible { outline: 3px solid var(--orig); outline-offset: 2px; }
+.legend { display: flex; align-items: center; gap: 0.5rem; font-size: var(--step--1); color: var(--ink-3); }
+.legend .bar { width: 150px; height: 10px; border-radius: 3px; }
+.caption { font-size: var(--step--1); color: var(--ink-3); text-align: center; max-width: 76ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 0.4rem 1.8rem; justify-content: center; font-size: var(--step--1); color: var(--ink-3); }
+.facts b { color: var(--ink); font-family: var(--font-mono); font-weight: 600; }
+.tabs { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; }
+.tab { font: 600 var(--step--1) var(--font-body); padding: 0.5rem 0.95rem; border-radius: 9px; cursor: pointer; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink-2); }
+.tab[aria-selected="true"] { border-color: var(--ink); color: var(--ink); box-shadow: inset 0 -3px 0 var(--v2); }
+
+/* scoreboard */
+.score { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.cell { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem; display: grid; gap: 0.35rem; align-content: start; }
+.cell .big { font: 900 clamp(1.8rem, 4.4vw, 2.6rem)/1.05 var(--font-display); font-stretch: 112%; }
+.cell .big .arrow { color: var(--ink-3); font-weight: 400; }
+.cell p { font-size: 0.93rem; }
+footer { font-size: var(--step--1); color: var(--ink-3); display: grid; gap: 0.45rem; }
+footer p { color: var(--ink-3); max-width: 84ch; }
+@media (max-width: 760px) { .score { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: no-preference) { .wipe.demo .top, .wipe.demo .bar, .wipe.demo .knob { transition: clip-path .9s ease-in-out, left .9s ease-in-out; } }
+</style>
+
+<main>
+  <header class="head">
+    <span class="eyebrow">Synaptus in Rust · second implementation · drag to compare</span>
+    <h1>Same echoes, <span class="v">fewer bugs.</span></h1>
+    <p class="lede">On the left, what the <span class="o">original code</span> computes. On the right, what the <span class="w">second Rust version</span> computes. They look alike, which is exactly how bugs like these survive for years. Press <b>Show the bugs</b> to see each side's error against the exact answer.</p>
+  </header>
+
+  <section aria-label="Hero comparison">
+    <div class="stage">
+      <div class="wipe" id="hero"></div>
+      <div class="controls">
+        <button class="btn" id="hero-btn" type="button" aria-pressed="false">Show the bugs</button>
+        <div class="legend" id="hero-legend"></div>
+      </div>
+      <p class="caption" id="hero-cap"></p>
+    </div>
+    <div class="aside"><span class="critter raccoon"><i></i>raccoon</span><p>The raccoon found these by going through the original's frequency bins, which is what raccoons do with bins. A Stolt factor applied twice, a depth grid missing its bottom end, and a frequency axis labelled three quarters of a bin from where the samples are.</p></div>
+  </section>
+
+  <section aria-labelledby="score-h">
+    <div class="head">
+      <span class="eyebrow">Scoreboard</span>
+      <h2 id="score-h">What changed, in three numbers</h2>
+    </div>
+    <div class="score">
+      <div class="cell"><span class="eyebrow">MULOK, pins</span><div class="big num" id="s-mulok"></div><p>Envelope error against the exact integral: the original, then v2's default. The bugs are off by default; the faithful copy runs only when called as <code>legacy::mulok</code>.</p></div>
+      <div class="cell"><span class="eyebrow">PSM, wires</span><div class="big num" id="s-psm"></div><p>How far the original PSM is from the integral it approximates. Not a bug: a rectangle rule. v2's SQ-PSM computes the integral itself, if you ask for it with <code>psm_sq</code>.</p></div>
+      <div class="cell"><span class="eyebrow">CPSM, pipe</span><div class="big num" id="s-cpsm"></div><p>How much the pipe image changes once the cylindrical code stops treating a 64° arc as a full circle. No exact answer exists to grade either side, so this is a difference, not an error.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="gal-h">
+    <div class="head">
+      <span class="eyebrow">Every dataset</span>
+      <h2 id="gal-h">Four scans, before and after</h2>
+      <p>Same rules for all four tabs: the left side is the original code (through the faithful Rust copy, which matches it to 1e-15); the right side is v2. Error maps use one log scale, from 10⁻⁵ (black) to 10⁻¹ (pale) of the brightest pixel.</p>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="stage">
+      <div class="wipe" id="gal"></div>
+      <div class="controls">
+        <button class="btn" id="gal-btn" type="button" aria-pressed="false">Show the bugs</button>
+        <div class="legend" id="gal-legend"></div>
+      </div>
+      <div class="facts" id="facts"></div>
+      <p class="caption" id="gal-cap"></p>
+    </div>
+    <div class="aside"><span class="critter badger"><i></i>badger</span><p>The badger checked the black right-hand error maps on the wires and holes tabs and is unimpressed. SQ-PSM is the exact reference there, so of course its error map is black. Its real exam was an independent oracle on other data, where it agreed to within 4.1e-11. The badger still wants a second badger to check that.</p></div>
+  </section>
+
+  <footer>
+    <p>Status: tested by the implementer, independent verification pending. "Exact" means the m → ∞ limit of PSM's own model; the physics model (angle-independent transmission, scalar waves) is the same on both sides, so neither side is more right about the specimen.</p>
+    <p>Every number and image is computed by <code>figures/build_showcase_v2.py</code> from <code>examples/gallery_v2.rs</code>. Original: Synaptus by M. H. Skjelvareid, JOSS 2022, doi:10.21105/joss.04185. GPL-3.0-or-later. Written by Claude Opus 5.5, guided by Tomas.</p>
+  </footer>
+</main>
+
+<script>
+/*__DATA__*/
+(function () {
+  const sci = (v, d = 1) => { const e = Math.floor(Math.log10(v)); return `${(v / 10 ** e).toFixed(d)}e${e}`; };
+  const pct = (v, d = 1) => `${(v * 100).toFixed(d)}%`;
+  const META = {
+    pins: { label: "Pins · MULOK", right: "v2 default MULOK", cap: "Pins in water, plexiglass and aluminium, layers at true thickness. −40 to 0 dB.", bugcap: "Error against the exact integral, each on its own depth grid. The original's error sits on every interface and pin, plus a V-shaped ghost in the aluminium. v2's looks like noise." },
+    wire: { label: "Wires · PSM", right: "v2 SQ-PSM", cap: "Four thin wires in water. Horizontal 0–175 mm, vertical: depth. −40 to 0 dB.", bugcap: "Error against the exact integral. The original's grows with depth: more depth, more phase to get wrong. The right side is black because SQ-PSM is the reference." },
+    plane: { label: "Holes · 3D PSM", right: "v2 SQ-PSM", cap: "Flat-bottom holes in plexiglass and aluminium, 3D, brightest value across the scan width. −40 to 0 dB.", bugcap: "Error against the exact integral, on this projection. The right side is black because SQ-PSM is the reference." },
+    pipe: { label: "Pipe · cylindrical PSM", right: "v2 default CPSM", cap: "Objects in a pipe: strongest echo over radius. Horizontal: along the pipe; vertical: angle. −25 to 0 dB.", bugcap: "No exact answer exists here, so both sides show the same thing: the difference between the two images, each normalised to its peak." },
+  };
+  const RIGHT_TAG = k => META[k].right;
+
+  function buildWipe(el) {
+    el.innerHTML = `<img class="under" alt=""><img class="top" alt=""><div class="bar"></div><div class="knob" aria-hidden="true">⇆</div><span class="tag l">Original</span><span class="tag r"></span><input type="range" min="0" max="100" value="50" step="0.5" aria-label="Move the divide between the original and v2">`;
+    const under = el.querySelector(".under"), top = el.querySelector(".top"), input = el.querySelector("input"), tagR = el.querySelector(".tag.r"), tagL = el.querySelector(".tag.l");
+    const set = v => el.style.setProperty("--cut", v + "%");
+    input.addEventListener("input", () => { el.classList.remove("demo"); set(input.value); });
+    return {
+      load(k, bugs) {
+        const t = T[k];
+        under.src = bugs ? t.err_o : t.orig;
+        top.src = bugs ? t.err_v : t.v2;
+        tagL.textContent = bugs ? "Original: error" : "Original";
+        tagR.textContent = bugs ? `${RIGHT_TAG(k)}: error` : RIGHT_TAG(k);
+        under.alt = `${bugs ? "Error map" : "Image"} from the original code, ${META[k].label}`;
+        top.alt = `${bugs ? "Error map" : "Image"} from ${RIGHT_TAG(k)}`;
+        under.onload = () => { const r = under.naturalWidth / under.naturalHeight; el.style.aspectRatio = r; el.style.maxWidth = `min(100%, calc(70vh * ${r}))`; };
+      },
+      demo() {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        el.classList.add("demo");
+        const seq = [24, 76, 50]; let i = 0;
+        const step = () => { if (!el.classList.contains("demo")) return; set(seq[i]); input.value = seq[i]; if (++i < seq.length) setTimeout(step, 1000); else setTimeout(() => el.classList.remove("demo"), 1000); };
+        setTimeout(step, 700);
+      }
+    };
+  }
+  const legend = (el, k, bugs) => {
+    el.innerHTML = bugs
+      ? `<span>10⁻⁵</span><span class="bar" style="background:${RAMP_DIFF}"></span><span>10⁻¹ of peak</span>`
+      : `<span>−${T[k].rng} dB</span><span class="bar" style="background:${RAMP_ECHO}"></span><span>0 dB</span>`;
+  };
+  function wire(wipeId, btnId, legendId, capId, getKey, after) {
+    const w = buildWipe(document.getElementById(wipeId));
+    const btn = document.getElementById(btnId);
+    let bugs = false;
+    const render = () => {
+      const k = getKey();
+      w.load(k, bugs);
+      legend(document.getElementById(legendId), k, bugs);
+      document.getElementById(capId).textContent = bugs ? META[k].bugcap : META[k].cap;
+      btn.setAttribute("aria-pressed", String(bugs));
+      btn.textContent = bugs ? "Back to the images" : "Show the bugs";
+      if (after) after(k, bugs);
+    };
+    btn.addEventListener("click", () => { bugs = !bugs; render(); });
+    render();
+    return { render, demo: () => w.demo() };
+  }
+
+  // hero: pins
+  const hero = wire("hero", "hero-btn", "hero-legend", "hero-cap", () => "pins");
+  hero.demo();
+
+  // scoreboard
+  const P = T.pins, W = T.wire, C = T.pipe;
+  document.getElementById("s-mulok").innerHTML = `${pct(P.e_orig)} <span class="arrow">→</span> ${pct(P.e_v2, 2)}`;
+  document.getElementById("s-psm").innerHTML = `${pct(W.e_orig)} <span class="arrow">→</span> exact`;
+  document.getElementById("s-cpsm").innerHTML = `${pct(C.rel)} <span class="arrow">changed</span>`;
+
+  // gallery
+  const order = ["wire", "pins", "plane", "pipe"];
+  let cur = "wire";
+  const tabs = document.getElementById("tabs");
+  const facts = (k) => {
+    const t = T[k];
+    let h;
+    if (k === "pipe") h = `<span>images differ by <b>${pct(t.rel)}</b> (rel. L2, each normalised)</span><span>exact answer: <b>none exists</b></span>`;
+    else if (t.e_v2 === null) h = `<span>original vs exact: <b>${sci(t.e_orig)}</b>${k === "plane" ? " (this projection)" : ""}</span><span>v2: <b>is the exact integral</b></span>`;
+    else h = `<span>original vs exact: <b>${sci(t.e_orig)}</b></span><span>v2 vs exact: <b>${sci(t.e_v2)}</b></span><span>smaller by <b>${Math.round(t.e_orig / t.e_v2)}×</b></span>`;
+    document.getElementById("facts").innerHTML = h;
+  };
+  const gal = wire("gal", "gal-btn", "gal-legend", "gal-cap", () => cur, (k) => { facts(k); [...tabs.children].forEach(b => b.setAttribute("aria-selected", String(b.dataset.key === k))); });
+  order.forEach(k => {
+    const b = document.createElement("button");
+    b.className = "tab"; b.type = "button"; b.setAttribute("role", "tab"); b.id = "tab-" + k; b.dataset.key = k; b.textContent = META[k].label;
+    b.addEventListener("click", () => { cur = k; gal.render(); });
+    tabs.appendChild(b);
+  });
+  gal.render();
+})();
+</script>

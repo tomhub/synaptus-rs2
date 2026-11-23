@@ -1,0 +1,391 @@
+<title>Same Echoes, New Engine</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one narrative column; the image comparisons are the stage, everything else stays quiet around them. */
+:root {
+  --bg: #f3f6f8;
+  --surface: #ffffff;
+  --ink: #142231;
+  --ink-2: #4a5b6b;
+  --ink-3: #6f7f8e;
+  --line: #dbe3ea;
+  --orig: #3654d6;          /* the original Synaptus code (Octave/MATLAB) */
+  --orig-soft: #e4e9fd;
+  --rust: #c9501f;          /* the Rust port */
+  --rust-soft: #fbe6dc;
+  --sonar: #0b1424;         /* image ground, matches the colour maps */
+  --good: #1d7f5c;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --step--1: 0.84rem;
+  --step-0: 1rem;
+  --step-1: 1.2rem;
+  --step-2: 1.6rem;
+  --step-3: clamp(1.9rem, 4vw, 2.5rem);
+  --step-4: clamp(2.6rem, 7vw, 4.4rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0d141c; --surface: #152029; --ink: #e9eff4; --ink-2: #b2c0cc; --ink-3: #8696a5; --line: #26343f;
+    --orig: #8ea2ff; --orig-soft: #1d2650; --rust: #ff8a57; --rust-soft: #3a1f14; --good: #56c99b;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d141c; --surface: #152029; --ink: #e9eff4; --ink-2: #b2c0cc; --ink-3: #8696a5; --line: #26343f;
+  --orig: #8ea2ff; --orig-soft: #1d2650; --rust: #ff8a57; --rust-soft: #3a1f14; --good: #56c99b;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: var(--step-0); line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 1040px; margin: 0 auto; padding-block: 3rem 4rem; display: grid; gap: 5rem; }
+section { display: grid; gap: 1.5rem; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.08; }
+h1 { font-size: var(--step-4); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: var(--step-3); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: var(--step-1); font-weight: 700; }
+p { margin: 0; max-width: 65ch; color: var(--ink-2); }
+.lede { font-size: var(--step-1); color: var(--ink-2); }
+.eyebrow { font-size: var(--step--1); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+.num { font-variant-numeric: tabular-nums; }
+.who-orig { color: var(--orig); font-weight: 600; }
+.who-rust { color: var(--rust); font-weight: 600; }
+
+/* ---------- hero ---------- */
+.hero { display: grid; gap: 1.25rem; }
+.hero h1 .new { color: var(--rust); }
+
+/* ---------- wipe comparison ---------- */
+.stage { display: grid; gap: 0.75rem; justify-items: center; }
+.wipe {
+  position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: var(--sonar);
+  touch-action: pan-y; user-select: none; box-shadow: 0 18px 40px -24px rgba(8, 20, 36, 0.55);
+}
+.wipe img { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+.wipe .top { clip-path: inset(0 0 0 var(--cut, 50%)); }
+.wipe .bar {
+  position: absolute; top: 0; bottom: 0; left: var(--cut, 50%); width: 3px; margin-left: -1.5px;
+  background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25); pointer-events: none;
+}
+.wipe .knob {
+  position: absolute; top: 50%; left: var(--cut, 50%); width: 44px; height: 44px; margin: -22px 0 0 -22px;
+  border-radius: 50%; background: #fff; display: grid; place-items: center; pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); color: #142231; font: 700 15px/1 var(--font-mono);
+}
+.wipe .tag {
+  position: absolute; top: 10px; padding: 3px 10px; border-radius: 999px; font-size: var(--step--1); font-weight: 600;
+  color: #fff; pointer-events: none;
+}
+.wipe .tag.l { left: 10px; background: #3654d6; }
+.wipe .tag.r { right: 10px; background: #c9501f; }
+.wipe input[type="range"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+.wipe:has(input:focus-visible) { outline: 3px solid var(--orig); outline-offset: 3px; }
+.wipe.diffmode .top, .wipe.diffmode .bar, .wipe.diffmode .knob, .wipe.diffmode .tag, .wipe.diffmode input { display: none; }
+.caption { font-size: var(--step--1); color: var(--ink-3); text-align: center; max-width: 70ch; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: center; }
+.legend { display: flex; align-items: center; gap: 0.5rem; font-size: var(--step--1); color: var(--ink-3); }
+.legend .bar { width: 150px; height: 10px; border-radius: 3px; }
+.btn {
+  font: 600 var(--step--1) var(--font-body); padding: 0.5rem 1rem; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.btn:hover { border-color: var(--ink-3); }
+.btn:focus-visible { outline: 3px solid var(--orig); outline-offset: 2px; }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* ---------- big number ---------- */
+.verdict {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 2.5rem; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: clamp(1.5rem, 4vw, 3rem);
+}
+.big { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 9vw, 5.6rem); line-height: 1; letter-spacing: -0.03em; }
+.big sup { font-size: 0.45em; vertical-align: 0.95em; letter-spacing: 0; }
+.verdict .say { display: grid; gap: 0.9rem; }
+.scale { display: grid; gap: 0.4rem; margin-top: 0.4rem; }
+.scale svg { width: 100%; height: auto; display: block; }
+
+/* ---------- tabs ---------- */
+.tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.tab {
+  font: 600 var(--step--1) var(--font-body); padding: 0.55rem 1rem; border-radius: 10px; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--ink-2);
+}
+.tab[aria-selected="true"] { border-color: var(--ink); color: var(--ink); box-shadow: inset 0 -3px 0 var(--rust); }
+.tab:focus-visible { outline: 3px solid var(--orig); outline-offset: 2px; }
+.facts { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; justify-content: center; font-size: var(--step--1); color: var(--ink-3); }
+.facts b { color: var(--ink); font-family: var(--font-mono); font-weight: 600; }
+
+/* ---------- beyond ---------- */
+.duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.panel { display: grid; gap: 0.6rem; align-content: start; }
+.panel img { width: 100%; border-radius: 12px; image-rendering: pixelated; background: var(--sonar); }
+.panel .head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
+.panel .score { font-family: var(--font-mono); font-weight: 600; font-size: var(--step-1); }
+.panel.o .score { color: var(--orig); }
+.panel.r .score { color: var(--rust); }
+.callout { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: baseline; }
+.callout .x { font-family: var(--font-display); font-weight: 800; font-size: var(--step-3); color: var(--good); }
+.fixes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.fix { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem; display: grid; gap: 0.5rem; align-content: start; }
+.fix p { font-size: 0.95rem; }
+.fix .ref { font-size: var(--step--1); color: var(--ink-3); font-family: var(--font-mono); }
+
+/* ---------- checks ---------- */
+.checks { list-style: none; padding: 0; margin: 0; display: grid; border-top: 1px solid var(--line); }
+.checks li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; gap: 0.75rem; align-items: baseline; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+.checks .ok { color: var(--good); font-weight: 700; }
+.checks .what { color: var(--ink); }
+.checks .what small { display: block; color: var(--ink-3); font-size: var(--step--1); }
+.checks .res { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-2); text-align: right; white-space: nowrap; }
+.note { background: var(--orig-soft); border-radius: 12px; padding: 1rem 1.2rem; color: var(--ink); max-width: none; }
+/* the cast: a stubborn badger and a bin-diving raccoon, drawn in CSS */
+.aside { display: flex; gap: 0.75rem; align-items: flex-start; max-width: 70ch; }
+.aside p { margin: 0; }
+.critter { flex: none; display: inline-flex; align-items: center; gap: 0.4rem; font: 600 0.78rem/1 var(--font-mono); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 0.2rem 0.6rem 0.2rem 0.2rem; white-space: nowrap; }
+.critter i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #2a2a2a; display: inline-block; }
+.critter.badger i { background: linear-gradient(90deg, #f4f4f0 0 22%, #1d1d1d 22% 40%, #f4f4f0 40% 60%, #1d1d1d 60% 78%, #f4f4f0 78%); }
+.critter.raccoon i { background: radial-gradient(circle at 34% 48%, #f4f4f0 0 9%, transparent 10%), radial-gradient(circle at 66% 48%, #f4f4f0 0 9%, transparent 10%), linear-gradient(180deg, #a9b0b3 0 34%, #1d1d1d 34% 62%, #a9b0b3 62%); }
+footer { font-size: var(--step--1); color: var(--ink-3); display: grid; gap: 0.4rem; }
+footer p { color: var(--ink-3); }
+
+@media (max-width: 760px) {
+  .verdict, .duo, .fixes { grid-template-columns: minmax(0, 1fr); }
+  .checks li { grid-template-columns: 1.4rem minmax(0, 1fr); }
+  .checks .res { grid-column: 2; text-align: left; white-space: normal; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .wipe.demo .top, .wipe.demo .bar, .wipe.demo .knob { transition: clip-path 0.9s ease-in-out, left 0.9s ease-in-out; }
+}
+</style>
+
+<main>
+  <header class="hero">
+    <span class="eyebrow">Synaptus · ultrasound imaging · ported to Rust</span>
+    <h1>Same echoes, <span class="new">new engine.</span></h1>
+    <p class="lede">Synaptus turns raw ultrasound recordings into sharp pictures of what is hidden inside metal and plastic. We rewrote its algorithms in Rust. Drag the slider: the left side is the <span class="who-orig">original code</span>, the right side is <span class="who-rust">Rust</span>. Try to find the seam.</p>
+  </header>
+
+  <section aria-label="Hero comparison">
+    <div class="stage">
+      <div class="wipe" id="hero-wipe"></div>
+      <p class="caption">Metal objects taped inside a pipe, seen by a probe turning and sliding along its axis (thesis Fig. 7.13). Horizontal: position along the pipe, 0–151 mm. Vertical: angle around the pipe, −32° to 32°. Brightness: strongest echo at each spot, −25 to 0 dB.</p>
+    </div>
+  </section>
+
+  <section class="verdict" aria-label="How close are they">
+    <div class="say">
+      <span class="eyebrow">The biggest difference we could find</span>
+      <div class="big num" id="worst-big"></div>
+      <p>That is the largest disagreement on any single pixel, as a fraction of the brightest pixel in its image, across <b class="num" id="px-total"></b> pixels from every algorithm and dataset compared.</p>
+    </div>
+    <div class="say">
+      <p>Measure the distance from the Earth to the Sun with this error and you would be off by about <b>0.1 mm</b>, the thickness of a sheet of paper.</p>
+      <div class="scale" aria-hidden="true">
+        <svg viewBox="0 0 400 70" role="img">
+          <circle cx="24" cy="30" r="10" fill="#3aa0d8"></circle>
+          <circle cx="372" cy="30" r="20" fill="#f6c343"></circle>
+          <line x1="40" y1="30" x2="346" y2="30" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 5" style="color: var(--ink-3)"></line>
+          <text x="193" y="62" text-anchor="middle" font-size="13" fill="currentColor" style="color: var(--ink-3)" font-family="JetBrains Mono, monospace">150 000 000 km  ±  0.1 mm</text>
+        </svg>
+      </div>
+      <div class="aside"><span class="critter badger"><i></i>badger</span><p>The badger refused to accept "looks the same" and compared every pixel. It is still grumbling about the fraction below.</p></div>
+      <p>The two programs are not bit-for-bit identical: only <b class="num" id="identical-pct"></b> of pixels match exactly. They use different FFT libraries, which add numbers up in a different order. What remains is the 16th significant digit, the last one a double-precision number has.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="gallery-h">
+    <div style="display:grid; gap:0.75rem">
+      <span class="eyebrow">Try every algorithm</span>
+      <h2 id="gallery-h">Four datasets, three algorithms, one answer</h2>
+      <p>Each recording was processed by the original Octave code and by the Rust port. Wipe between them, then press <b>Show the difference</b> to see the gap magnified about a million billion times.</p>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="stage">
+      <div class="wipe" id="gal-wipe"></div>
+      <div class="controls">
+        <button class="btn" id="diff-btn" type="button" aria-pressed="false">Show the difference</button>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="facts" id="facts"></div>
+      <p class="caption" id="gal-cap"></p>
+    </div>
+  </section>
+
+  <section aria-labelledby="beyond-h">
+    <div style="display:grid; gap:0.75rem">
+      <span class="eyebrow">Where Rust goes further</span>
+      <h2 id="beyond-h">A sharper MULOK</h2>
+      <p>MULOK is the fast multi-layer algorithm. While porting it we compared the original code line by line with the PhD thesis it comes from, and found three places where they differ. The Rust crate keeps a faithful copy of the original, and adds a version that follows the thesis with better interpolation. Below, each is compared with a very fine reference image of the same scan. Bright means wrong.</p>
+    </div>
+    <div class="duo">
+      <figure class="panel o" style="margin:0">
+        <div class="head"><h3>Original MULOK</h3><span class="score num" id="E-leg"></span></div>
+        <img id="img-leg" alt="Error map of the original MULOK on the pins dataset: bright streaks follow every pin and interface.">
+      </figure>
+      <figure class="panel r" style="margin:0">
+        <div class="head"><h3>Improved MULOK in Rust</h3><span class="score num" id="E-acc"></span></div>
+        <img id="img-acc" alt="Error map of the improved MULOK on the same data: almost uniformly dark.">
+      </figure>
+    </div>
+    <div class="legend" id="legend-err" style="justify-content:center"></div>
+    <div class="callout">
+      <span class="x num" id="ratio"></span>
+      <p>smaller overall envelope error on the pins-in-plexiglass-and-aluminium scan, measured against PSM with an 8× finer frequency grid. Later, the second Rust version found that this reference is itself slightly off. Against the exact answer the gap is 3.0% versus 0.06%, about 50×. Still a win; just a smaller trophy.</p>
+    </div>
+    <div class="aside"><span class="critter raccoon"><i></i>raccoon</span><p>The raccoon went through the frequency bins, which is what raccoons do with bins, and came back with three things the original threw away or mislabelled:</p></div>
+    <div class="fixes">
+      <div class="fix">
+        <h3>A squared correction</h3>
+        <p>The amplitude factor for changing coordinates is applied squared in the code, where the thesis has it once.</p>
+        <span class="ref">dossier C4</span>
+      </div>
+      <div class="fix">
+        <h3>A trimmed depth grid</h3>
+        <p>The code's depth-frequency grid starts at the lowest transmitted frequency instead of zero, so some oblique echoes are thrown away.</p>
+        <span class="ref">dossier C5</span>
+      </div>
+      <div class="fix">
+        <h3>A frequency shifted by ¾ of a step</h3>
+        <p>After upsampling, the frequency axis is labelled 0.75 steps away from where the samples really are.</p>
+        <span class="ref">dossier C6</span>
+      </div>
+    </div>
+    <p>The cylindrical PSM got the same treatment. The original pretends a 64° scan is a full circle, lets evanescent waves through with zero phase and keeps the DC bin. The Rust default fixes all three; the faithful copy stays available for comparisons like the one above. The pipe image's brightness changes by about 3%, and almost nothing moves. Nobody said fixing bugs has to be dramatic.</p>
+  </section>
+
+  <section aria-labelledby="checks-h">
+    <div style="display:grid; gap:0.75rem">
+      <span class="eyebrow">How we checked</span>
+      <h2 id="checks-h">Pass marks were set before the tests ran</h2>
+    </div>
+    <ul class="checks">
+      <li><span class="ok">✓</span><span class="what">Same images as the original PSM and MULOK<small>3 datasets, 14 image layers, compared with GNU Octave 11.3</small></span><span class="res">≤ 1.3e-15 · limit 1e-9</span></li>
+      <li><span class="ok">✓</span><span class="what">Same images as the original cylindrical PSM<small>objects-in-pipe scan, both transfer functions</small></span><span class="res">5.8e-16 · limit 1e-9</span></li>
+      <li><span class="ok">✓</span><span class="what">Puts a point reflector where physics says it is<small>synthetic data, one layer (exact) and two layers (ray-traced)</small></span><span class="res">within 0.4 pixel</span></li>
+      <li><span class="ok">✓</span><span class="what">The corrected cylindrical PSM finds scatterers where geometry says they are<small>synthetic pipe data, two scatterers, the default with all bugs fixed</small></span><span class="res">within 0.5 sample · limit 1</span></li>
+      <li><span class="ok">✓</span><span class="what">Envelope of a known pulse<small>Gaussian burst with an exact answer</small></span><span class="res">1.8e-14 · limit 1e-12</span></li>
+      <li><span class="ok">✓</span><span class="what">Bad input gives an error message, never a crash<small>wrong sizes, empty data, impossible frequencies</small></span><span class="res">all rejected</span></li>
+    </ul>
+    <p class="note">Matching the original shows the port is faithful; it does not prove the original is right. That is why the point-reflector tests exist, and why the MULOK differences above were measured rather than copied. All checks so far were run by the same author who wrote the port: Claude, guided by Tomas. An independent badger is still wanted.</p>
+  </section>
+
+  <footer>
+    <p>Original: Synaptus by M. H. Skjelvareid, Journal of Open Source Software (2022), doi:10.21105/joss.04185. The port is GPL-3.0-or-later like the original. Written by Claude Opus 5.5, guided by Tomas.</p>
+    <p>Every number and image on this page is computed by <code>figures/build_showcase.py</code> from the Octave and Rust outputs. Speed is left out on purpose: the timings so far are single runs.</p>
+  </footer>
+</main>
+
+<script>
+/*__DATA__*/
+(function () {
+  const sci = (v, d = 1) => {
+    const e = Math.floor(Math.log10(v)), m = v / Math.pow(10, e);
+    const sup = String(e).replace("-", "−");
+    return `${m.toFixed(d)} × 10<sup>${sup}</sup>`;
+  };
+  const pct = v => (v * 100).toFixed(1) + "%";
+
+  function buildWipe(el, pair, labels) {
+    el.innerHTML = `
+      <img class="under" alt="">
+      <img class="top" alt="">
+      <div class="bar"></div><div class="knob" aria-hidden="true">⇆</div>
+      <span class="tag l">${labels[0]}</span><span class="tag r">${labels[1]}</span>
+      <input type="range" min="0" max="100" value="50" step="0.5" aria-label="Move the divide between ${labels[0]} and ${labels[1]}">`;
+    const under = el.querySelector(".under"), top = el.querySelector(".top"), input = el.querySelector("input");
+    const set = v => el.style.setProperty("--cut", v + "%");
+    input.addEventListener("input", () => { el.classList.remove("demo"); set(input.value); });
+    const api = {
+      load(p, diff) {
+        under.src = diff ? p.diff : p.orig;
+        top.src = p.rust;
+        el.classList.toggle("diffmode", !!diff);
+        under.alt = diff ? "Difference between the original and Rust images, magnified" : "Image from the original Octave code";
+        top.alt = "Image from the Rust port";
+        under.onload = () => {
+          const r = under.naturalWidth / under.naturalHeight;
+          el.style.aspectRatio = r;
+          el.style.maxWidth = `min(100%, calc(70vh * ${r}))`;
+        };
+      },
+      demo() {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        el.classList.add("demo");
+        const seq = [22, 78, 50]; let i = 0;
+        const step = () => { if (!el.classList.contains("demo")) return; set(seq[i]); input.value = seq[i]; if (++i < seq.length) setTimeout(step, 1000); else setTimeout(() => el.classList.remove("demo"), 1000); };
+        setTimeout(step, 600);
+      }
+    };
+    api.load(pair, false);
+    return api;
+  }
+
+  // hero
+  const hero = buildWipe(document.getElementById("hero-wipe"), IMGS.pipe, ["Original", "Rust"]);
+  hero.demo();
+
+  // verdict
+  document.getElementById("worst-big").innerHTML = sci(STATS.worst_all);
+  document.getElementById("px-total").textContent = (STATS.total_pixels / 1e6).toFixed(1) + " million";
+  const ident = ["wire", "pins", "plane", "pipe"].map(k => STATS[k]);
+  const identAll = ident.reduce((a, s) => a + s.identical * s.pixels, 0) / ident.reduce((a, s) => a + s.pixels, 0);
+  document.getElementById("identical-pct").textContent = pct(identAll);
+
+  // gallery
+  const tabs = [
+    { key: "wire", label: "Wires · PSM", cap: "Four thin wires in water, scanned along a line. Horizontal: probe position, 0–175 mm. Vertical: depth. −40 to 0 dB." },
+    { key: "pins", label: "Pins · MULOK", cap: "Pins in a three-layer block (water, plexiglass, aluminium), each layer drawn at its true thickness. The bright bands are the layer boundaries. −40 to 0 dB." },
+    { key: "plane", label: "Holes · 3D PSM", cap: "Flat-bottom holes in plexiglass and aluminium, focused in 3D and shown as the brightest value across the scan width. −40 to 0 dB." },
+    { key: "pipe", label: "Pipe · cylindrical PSM", cap: "Objects in a pipe: strongest echo over radius. Horizontal: along the pipe. Vertical: angle. −25 to 0 dB." },
+  ];
+  const tabsEl = document.getElementById("tabs");
+  const gal = buildWipe(document.getElementById("gal-wipe"), IMGS[tabs[0].key], ["Original", "Rust"]);
+  const diffBtn = document.getElementById("diff-btn");
+  let cur = tabs[0].key, diff = false;
+  const legend = document.getElementById("legend");
+  function render() {
+    gal.load(IMGS[cur], diff);
+    const s = STATS[cur], t = tabs.find(t => t.key === cur);
+    document.getElementById("facts").innerHTML =
+      `<span>overall difference <b>${sci(s.rel)}</b></span><span>worst pixel <b>${sci(s.worst)}</b></span><span>values compared <b>${s.pixels.toLocaleString("en")}</b></span>`;
+    document.getElementById("gal-cap").textContent = diff
+      ? "|Rust − original| at each pixel, divided by the brightest pixel. Black means the two agree to the last bit."
+      : t.cap;
+    legend.innerHTML = diff
+      ? `<span>0</span><span class="bar" style="background:${RAMP_DIFF}"></span><span>${sci(DIFF_MAX, 0)}</span>`
+      : `<span>−${IMGS[cur].rng} dB</span><span class="bar" style="background:${RAMP_ECHO}"></span><span>0 dB</span>`;
+    diffBtn.setAttribute("aria-pressed", String(diff));
+    diffBtn.textContent = diff ? "Back to the images" : "Show the difference";
+    [...tabsEl.children].forEach(b => b.setAttribute("aria-selected", String(b.dataset.key === cur)));
+  }
+  tabs.forEach(t => {
+    const b = document.createElement("button");
+    b.className = "tab"; b.type = "button"; b.role = "tab"; b.id = "tab-" + t.key; b.dataset.key = t.key; b.textContent = t.label;
+    b.addEventListener("click", () => { cur = t.key; render(); });
+    tabsEl.appendChild(b);
+  });
+  diffBtn.addEventListener("click", () => { diff = !diff; render(); });
+  render();
+
+  // beyond
+  document.getElementById("img-leg").src = IMGS.better.legacy;
+  document.getElementById("img-acc").src = IMGS.better.accurate;
+  document.getElementById("E-leg").textContent = (STATS.better.legacy * 100).toFixed(2) + "% error";
+  document.getElementById("E-acc").textContent = (STATS.better.accurate * 100).toFixed(2) + "% error";
+  document.getElementById("ratio").textContent = Math.round(STATS.better.ratio) + "×";
+  document.getElementById("legend-err").innerHTML =
+    `<span>0%</span><span class="bar" style="background:${RAMP_DIFF}"></span><span>${ERR_MAX * 100}% of peak or more</span>`;
+})();
+</script>

@@ -1,0 +1,8 @@
+tol=1e-12: ||layer1|| = 2.408e0, ||layer2|| = 7.611e3 (ratio 3.2e-4); ||data|| = 2.537e1
+  kappa=2: layer-1 rel L2 to kappa=6 (same tol) = 6.135e-10
+  kappa=3: layer-1 rel L2 to kappa=6 (same tol) = 2.540e-10
+  kappa=4: layer-1 rel L2 to kappa=6 (same tol) = 1.554e-10
+tol=1e-14: ||layer1|| = 2.408e0, ||layer2|| = 7.611e3 (ratio 3.2e-4); ||data|| = 2.537e1
+  kappa=2: layer-1 rel L2 to kappa=6 (same tol) = 1.236e-10
+  kappa=3: layer-1 rel L2 to kappa=6 (same tol) = 1.104e-10
+  kappa=4: layer-1 rel L2 to kappa=6 (same tol) = 1.037e-10

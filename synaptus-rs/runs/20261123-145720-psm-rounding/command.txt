@@ -1,0 +1,2 @@
+cargo run --release --example psm_rounding -- runs/20261123-145720-psm-rounding/dump
+.venv/bin/python -I verify/psm_rounding_ref.py runs/20261123-145720-psm-rounding/dump

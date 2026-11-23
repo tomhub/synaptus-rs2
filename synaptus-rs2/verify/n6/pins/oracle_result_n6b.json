@@ -1,0 +1,122 @@
+[
+ {
+  "layer": 1,
+  "iz": 165,
+  "ix": 3,
+  "oracle_abs": 185185.3191572027,
+  "sq_abs": 185185.31915720686,
+  "err_rel_layer_max": 3.186990080732664e-14,
+  "oracle_conv": 2.811373756972209e-15,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 1,
+  "iz": 41,
+  "ix": 27,
+  "oracle_abs": 2885.2796309061396,
+  "sq_abs": 2885.279630910913,
+  "err_rel_layer_max": 2.5867618322450802e-14,
+  "oracle_conv": 2.1666708071811585e-16,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 1,
+  "iz": 83,
+  "ix": 55,
+  "oracle_abs": 386.8159858536754,
+  "sq_abs": 386.8159858461557,
+  "err_rel_layer_max": 4.2769090184238506e-14,
+  "oracle_conv": 2.278938853893884e-16,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 1,
+  "iz": 124,
+  "ix": 83,
+  "oracle_abs": 1759.9283186215353,
+  "sq_abs": 1759.9283186188495,
+  "err_rel_layer_max": 1.628620240142535e-14,
+  "oracle_conv": 7.69856899141625e-16,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 2,
+  "iz": 19,
+  "ix": 19,
+  "oracle_abs": 196552.5956443144,
+  "sq_abs": 196552.59564431812,
+  "err_rel_layer_max": 1.8851073309489513e-14,
+  "oracle_conv": 2.46440029932523e-15,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 2,
+  "iz": 23,
+  "ix": 27,
+  "oracle_abs": 847.0582037346169,
+  "sq_abs": 847.058203731303,
+  "err_rel_layer_max": 3.16445057907996e-14,
+  "oracle_conv": 5.565838041235173e-16,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 2,
+  "iz": 46,
+  "ix": 55,
+  "oracle_abs": 340.7381277399659,
+  "sq_abs": 340.73812773641106,
+  "err_rel_layer_max": 1.8566316197029823e-14,
+  "oracle_conv": 4.333264410881981e-16,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 2,
+  "iz": 69,
+  "ix": 83,
+  "oracle_abs": 1827.1025317472938,
+  "sq_abs": 1827.10253175096,
+  "err_rel_layer_max": 1.8690668989144854e-14,
+  "oracle_conv": 5.470431389799512e-16,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 3,
+  "iz": 2,
+  "ix": 34,
+  "oracle_abs": 173553.05653847553,
+  "sq_abs": 173553.05653847934,
+  "err_rel_layer_max": 9.135133433948473e-14,
+  "oracle_conv": 3.005657242629459e-15,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 3,
+  "iz": 17,
+  "ix": 27,
+  "oracle_abs": 5665.856282595734,
+  "sq_abs": 5665.85628259351,
+  "err_rel_layer_max": 2.128253630773587e-14,
+  "oracle_conv": 7.967456471756284e-16,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 3,
+  "iz": 35,
+  "ix": 55,
+  "oracle_abs": 5319.8407540305325,
+  "sq_abs": 5319.840754030675,
+  "err_rel_layer_max": 2.82194387897245e-15,
+  "oracle_conv": 1.1009668229444594e-15,
+  "verdict": "PASS"
+ },
+ {
+  "layer": 3,
+  "iz": 52,
+  "ix": 83,
+  "oracle_abs": 6407.630869439083,
+  "sq_abs": 6407.630869441249,
+  "err_rel_layer_max": 4.9961999752084054e-14,
+  "oracle_conv": 1.351505789201677e-15,
+  "verdict": "PASS"
+ }
+]

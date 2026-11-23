@@ -1,0 +1,16 @@
+dataset	m	E_vs_SQ
+wire	1	1.343313e-2
+wire	2	3.935069e-3
+wire	4	1.395025e-3
+wire	8	4.646617e-4
+wire	16	3.017316e-4
+pins	1	1.609841e-3
+pins	2	5.538200e-4
+pins	4	1.550978e-4
+pins	8	2.091808e-4
+pins	16	6.421692e-5
+plane	1	4.778726e-3
+plane	2	1.815714e-3
+plane	4	6.972278e-4
+plane	8	1.765053e-4
+plane	16	2.700761e-4

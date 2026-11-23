@@ -1,0 +1,4 @@
+fixes only (orig vs corrected-Haun): 0.01872802326745112
+transfer only (corrected-Haun vs corrected-Hankel): 0.022961028276675968
+total: 0.02929348185531525
+topography: pixels above -15 dB with different range sample: 0.015142690739662202

@@ -1,0 +1,1 @@
+cargo test --release -- --nocapture --test-threads=1; .venv/bin/python -I verify/sq_oracle.py verify/n6/{t2,t3,pins}; .venv/bin/python -I verify/sq_oracle.py --n6b verify/n6/{t2,t3,pins}
