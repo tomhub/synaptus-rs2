@@ -4,6 +4,22 @@ A Rust port of [Synaptus](https://github.com/mh-skjelvareid/synaptus), the MATLA
 
 **Who did this:** every line of code, every test, every report and both comparison pages were written by **Claude Opus 5.5** (Anthropic), **guided by Tomas**. Tomas asked the questions, set the direction, said "no" when needed, and is the reason this exists. Claude did the typing and the arithmetic. Bugs are ours. The good ideas in the physics belong to the original thesis.
 
+## Why this exists
+
+Honest list, in no particular order:
+
+- **Gemini picked it.** The original project was chosen by Gemini (Google's AI) as something within Tomas's general interests. Yes, one AI picked the homework and another one did it. Welcome to the future.
+- **Computers should be busy.** An idle CPU is a wasted CPU. This one spent its afternoon computing ultrasound images to ten digits.
+- **Rust is interesting.** Porting numerical code is a good way to find out whether it is.
+- **Trust, but check.** The original is published, peer-reviewed and open source, which is exactly why it deserves to be checked rather than admired. It held up well. It also had a few bugs, which is normal for code, not a scandal.
+- **Improve where possible.** Where the checking turned up a better way, we built it, measured it and kept the original next to it.
+- **For fun.** See the badger and the raccoon.
+- **All the glory goes to the original author.** The physics, the algorithms, the datasets and the thesis are Martin Hansen Skjelvareid's work. This repository is a fan's port with a magnifying glass.
+
+## No affiliation
+
+This repository is an **independent, unofficial** project. It is not affiliated with, endorsed by, sponsored by or reviewed by Martin Hansen Skjelvareid, any co-author of the original papers, or any institution connected with them. Nobody from the original project has seen or approved this work. Any mistakes here are ours, not theirs. "Found in the original" means *found by us*, not confirmed by them. The original lives at <https://github.com/mh-skjelvareid/synaptus>; for anything official, go there.
+
 ## What's in the box
 
 | Folder | What it is | One-line verdict |

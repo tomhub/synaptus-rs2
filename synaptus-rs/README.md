@@ -62,6 +62,6 @@ The plot script only applies display transforms (dB, thresholds, colour maps); a
 Array PSM, the chirp-z MULOK path, and CPSM's 'exact' Hankel transfer function. Matched filtering (`hh`) is implemented but untested.
 
 ## Licence and authorship
-GPL-3.0-or-later (see `../LICENSE`), because this is a derivative of [Synaptus](https://github.com/mh-skjelvareid/synaptus) © Martin Hansen Skjelvareid, which is GPL-3.0. Written by Claude Opus 5.5, guided by Tomas.
+GPL-3.0-or-later (see `../LICENSE`), because this is a derivative of [Synaptus](https://github.com/mh-skjelvareid/synaptus) © Martin Hansen Skjelvareid, which is GPL-3.0. Written by Claude Opus 5.5, guided by Tomas. Independent, unofficial project: not affiliated with, endorsed or reviewed by the original author(s) of Synaptus.
 
 **Status:** tested by the implementer. Independent verification is pending.

@@ -35,6 +35,6 @@ v2 borrows v1's data. Build it in `../synaptus-rs` first (see the v1 README, whi
 - Matched filtering in SQ-PSM; 3D is supported but was checked only through N4/N7, not by the independent oracle.
 
 ## Licence and authorship
-GPL-3.0-or-later (see `../LICENSE`), because this is a derivative of [Synaptus](https://github.com/mh-skjelvareid/synaptus) © Martin Hansen Skjelvareid, which is GPL-3.0. Written by Claude Opus 5.5, guided by Tomas.
+GPL-3.0-or-later (see `../LICENSE`), because this is a derivative of [Synaptus](https://github.com/mh-skjelvareid/synaptus) © Martin Hansen Skjelvareid, which is GPL-3.0. Written by Claude Opus 5.5, guided by Tomas. Independent, unofficial project: not affiliated with, endorsed or reviewed by the original author(s) of Synaptus.
 
 **Status:** tested by the implementer. Independent verification is pending.
