@@ -52,6 +52,18 @@ The plot script only applies display transforms (dB, thresholds, colour maps); a
 | `pins_mulok_comparison.png` | Pins dataset: PSM, legacy MULOK and accurate MULOK against a PSM t_fft_mult = 8 reference, with the E-metric of ACCURACY.md |
 | `timings.png` | Rust vs original Octave on the same tasks (single runs, indicative only) |
 
+## Interactive performance report
+The repeated Rust / MATLAB (or Octave) / Python comparison runs the same WireTargets PSM workload, checks the output images agree, and records mean, median, quartiles, sample standard deviation, min and max. The report compares implementations and their FFT backends on this machine; it is not a language-wide ranking.
+```
+.venv/bin/pip install -r requirements-benchmark.txt
+.venv/bin/python -I benchmarks/run_benchmark.py --warmups 2 --repeats 9
+```
+That command uses Octave. For MATLAB on Windows, install Python 3, Rust/Cargo and MATLAB, and ensure `py` (or `python`), `cargo`, and `matlab` are on `PATH`. From PowerShell in the cloned repository, run:
+```powershell
+.\benchmarks\run_windows_matlab.ps1
+```
+The script creates `.venv`, installs the pinned NumPy dependency, builds the Rust release example, runs MATLAB and Python repeatedly, checks image agreement, and writes the same report. Adjust sampling with `-Warmups 3 -Repeats 15`. Open `benchmarks/performance_report.html`; raw samples, environment details and SHA-256 provenance are in `benchmarks/benchmark_results.json`. Each run replaces those two report files.
+
 ## Conventions
 - Input: `PulseEchoData`, stored column-major with t fastest (identical to MATLAB `ptxy(:)`).
 - Output: complex images, `data[(iz*nx + ix)*ny + iy]`; use `.norm()` for the envelope.
