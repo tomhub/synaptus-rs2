@@ -29,6 +29,19 @@ python3 -I figures/build_showcase_v2.py                # figures/showcase_v2.htm
 ```
 v2 borrows v1's data. Build it in `../synaptus-rs` first (see the v1 README, which needs the original [Synaptus](https://github.com/mh-skjelvareid/synaptus) cloned into `../synaptus`), then link it here with `ln -s ../synaptus-rs/data data`. The link is not in the repository. The oracle needs only NumPy.
 
+## Cross-runtime PSM benchmark
+The benchmark runs the baseline PSM from both `synaptus-rs` and `synaptus-rs2`, plus Octave and Python/NumPy, on the same WireTargets input. It checks all four images against rs2 before reporting timings. The two Rust implementations use the requested Rayon worker count, defaulting to the detected logical CPU count; Octave and common NumPy math threads remain limited to one. This comparison does not time NUFFT-PSM or SQ-PSM; SQ-PSM has a different continuous-integral accuracy target.
+
+```sh
+python3 -m venv .venv
+.venv/bin/pip install -r requirements-benchmark.txt
+.venv/bin/python -I benchmarks/run_benchmark.py --engine octave --warmups 2 --repeats 9 --rayon-threads 16
+```
+
+The latest report and JSON are written to `benchmarks/`; each execution is also preserved under `runs/<timestamp>-psm-benchmark/`. The command's worker count is an example; omit `--rayon-threads` to use the detected logical CPU count. Both Rust repositories must be present as sibling directories. Octave is required for the command above. MATLAB can be selected with `--engine matlab` where MATLAB is installed.
+
+Refresh the latest HTML from the recorded JSON without rerunning timings with `.venv/bin/python -I benchmarks/run_benchmark.py --render-only`.
+
 ## Not addressed
 - Spatial wraparound (the kₓ sum on a DFT grid, `x_fft_mult`) is the same as in v1.
 - The physics: angle-independent transmission, scalar waves, the exploding-reflector model. A more exact evaluation of the same model is not a better model.

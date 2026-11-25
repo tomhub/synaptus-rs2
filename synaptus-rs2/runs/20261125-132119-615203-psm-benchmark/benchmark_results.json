@@ -1,0 +1,174 @@
+{
+  "timestamp": "2026-11-25T13:21:19.615237+00:00",
+  "run_record": "runs/20261125-132119-615203-psm-benchmark",
+  "benchmark_scope": "Discrete baseline PSM parity across synaptus-rs, synaptus-rs2, and the selected third runtime; NUFFT-PSM and SQ-PSM are not timed.",
+  "engine_key": "octave",
+  "engine_name": "Octave",
+  "rebuild_command": ".venv/bin/python -I benchmarks/run_benchmark.py --engine octave --warmups 2 --repeats 9 --rayon-threads 16",
+  "warmups": 2,
+  "repeats": 9,
+  "rayon_threads": 16,
+  "tolerance_normalized_to_rs2_peak": 1e-11,
+  "palette": {
+    "rust": "#0c8177",
+    "rust_v1": "#df6848",
+    "octave": "#386cb0",
+    "python": "#b08028"
+  },
+  "languages": {
+    "rust": {
+      "name": "Rust rs2 PSM"
+    },
+    "rust_v1": {
+      "name": "Rust rs PSM"
+    },
+    "octave": {
+      "name": "Octave"
+    },
+    "python": {
+      "name": "Python / NumPy"
+    }
+  },
+  "results": {
+    "rust": {
+      "samples_sec": [
+        0.878155226,
+        0.906875585,
+        0.890238015,
+        0.898917915,
+        0.905577092,
+        0.875106646,
+        0.877295059,
+        0.859501472,
+        0.890582613
+      ],
+      "mean_sec": 0.8869166247777778,
+      "median_sec": 0.890238015,
+      "q1_sec": 0.877295059,
+      "q3_sec": 0.898917915,
+      "sd_sec": 0.01571415777601299,
+      "min_sec": 0.859501472,
+      "max_sec": 0.906875585
+    },
+    "rust_v1": {
+      "samples_sec": [
+        0.893382699,
+        0.904057133,
+        0.875362267,
+        0.90415512,
+        0.883177251,
+        0.920814831,
+        0.8895535,
+        0.904227477,
+        0.869398712
+      ],
+      "mean_sec": 0.89379211,
+      "median_sec": 0.893382699,
+      "q1_sec": 0.883177251,
+      "q3_sec": 0.90415512,
+      "sd_sec": 0.016268807004506787,
+      "min_sec": 0.869398712,
+      "max_sec": 0.920814831
+    },
+    "octave": {
+      "samples_sec": [
+        2.330667019,
+        2.249312878,
+        2.281269073,
+        2.273804903,
+        2.252279043,
+        2.26832509,
+        2.27371192,
+        2.322035074,
+        2.247365952
+      ],
+      "mean_sec": 2.2776412168888887,
+      "median_sec": 2.27371192,
+      "q1_sec": 2.252279043,
+      "q3_sec": 2.281269073,
+      "sd_sec": 0.030155813680496833,
+      "min_sec": 2.247365952,
+      "max_sec": 2.330667019
+    },
+    "python": {
+      "samples_sec": [
+        1.299623922,
+        1.324557684,
+        1.372425647,
+        1.44219723,
+        1.366258574,
+        1.390822945,
+        1.389456566,
+        1.416055769,
+        1.314202288
+      ],
+      "mean_sec": 1.3684000694444445,
+      "median_sec": 1.372425647,
+      "q1_sec": 1.324557684,
+      "q3_sec": 1.390822945,
+      "sd_sec": 0.04779350375733508,
+      "min_sec": 1.299623922,
+      "max_sec": 1.44219723
+    }
+  },
+  "agreement": {
+    "rust": {
+      "points": 238700,
+      "max_abs_error_over_rs2_peak": 0.0
+    },
+    "rust_v1": {
+      "points": 238700,
+      "max_abs_error_over_rs2_peak": 0.0
+    },
+    "octave": {
+      "points": 238700,
+      "max_abs_error_over_rs2_peak": 2.714121594667496e-16
+    },
+    "python": {
+      "points": 238700,
+      "max_abs_error_over_rs2_peak": 2.862722888106265e-16
+    }
+  },
+  "output_points": 238700,
+  "workload": {
+    "dataset": "WireTargets (bundled data/wire.f64)",
+    "nt": 6800,
+    "nx": 350,
+    "fs_hz": 25000000.0,
+    "f_low_hz": 400000.0,
+    "f_high_hz": 2500000.0,
+    "velocity_m_s": 1480.0,
+    "thickness_m": 0.23088,
+    "x_step_m": 0.0005,
+    "depth_step": "(c / 2) / f_high, matching PsmOptions default"
+  },
+  "environment": {
+    "os": "Linux-7.3.6-arch1-1-x86_64-with-glibc2.44",
+    "cpu": "AMD Ryzen 7 5700U with Radeon Graphics",
+    "logical_cpus": 16,
+    "python": "3.14.10",
+    "numpy": "2.5.5",
+    "octave_version": "GNU Octave (x86_64-pc-linux-gnu) version 11.3.0",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "parallelism": "Rust rs and rs2 use Rayon=16 workers each; MATLAB/Octave and common NumPy math thread env vars are limited to 1",
+    "rayon_threads_per_rust_implementation": 16,
+    "git_revision": "127c5105408acb903129abf54277fe8dc6d0e811"
+  },
+  "provenance": {
+    "wire_f64_sha256": "1dc2a000df02368463f2378868f5bb3f6aaf5062ae84575ee3a52ed3d11bb9c7",
+    "wire_metadata_sha256": "5e7c4fdf4d681228c5044eb388b185a912f3c3d7eb97c72b6ca6c083c5cee8c2",
+    "rust_runner_sha256": "b06a7877816ab0078a688ec1f500e5cb0a70460b47c5f6a4c93dc27f988420df",
+    "rs1_rust_runner_sha256": "b06a7877816ab0078a688ec1f500e5cb0a70460b47c5f6a4c93dc27f988420df",
+    "rs1_psm_implementation_sha256": "864026679a1b6f6b221d1c69b78291cae97b1a3dc1185810813fa1c854708346",
+    "rs1_cargo_manifest_sha256": "ff3a4ca5f2c82b760aaae4ec3c2f44d4ee0a57adbd92f39726ca5b0f411ef382",
+    "rs1_cargo_lock_sha256": "2078377b0542cbd696c744309326eb7e1736be317333845ca1c8b768ea0cfd21",
+    "octave_runner_sha256": "21a04d73e08c91eab465d16e3e47c362103dcfdb73046cd8228fc349bb67389e",
+    "python_runner_sha256": "0374ae62900866adafbc7e121349c29e569ad8bf4ee4db95e36f068011be9d61",
+    "orchestrator_sha256": "b0fc9ab69cf16ee482bad53795425e45dcf6e7a04fe1ceda0b809c8cbf9c90da",
+    "psm_implementation_sha256": "864026679a1b6f6b221d1c69b78291cae97b1a3dc1185810813fa1c854708346",
+    "cargo_manifest_sha256": "45b291ae617a3b96c7648c96ce5814085846f8f34eae42f786e4bec711521513",
+    "cargo_lock_sha256": "e650effe92485d0c5a8044e54fe8ab2b623ff9722259960e30be1e7b88d22f31",
+    "benchmark_requirements_sha256": "8ac7cb7e51bc457fb12a71a87e0d702be498347c4523571d831445fd0748d3a7"
+  }
+}

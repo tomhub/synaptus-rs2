@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Synaptus rs2 baseline PSM | performance</title>
+<style>
+:root{color-scheme:light;--ink:#172a2b;--muted:#586a69;--paper:#f7f8f4;--white:#fff;--line:#d5ded8;--green:#0c8177;--orange:#df6848;--blue:#386cb0;--lime:#d9e86a;--shadow:0 12px 35px #233c3910}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 82% 4%,#e0efe8 0,transparent 29rem),var(--paper);color:var(--ink);font:16px/1.5 Georgia,"Times New Roman",serif}
+.shell{width:min(1120px,calc(100% - 40px));margin:auto}.mast{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line);font:700 12px/1.2 ui-monospace,monospace;letter-spacing:0;color:var(--muted);text-transform:uppercase}.mast strong{color:var(--green)}
+header{padding:42px 0 30px}.eyebrow{font:700 12px/1.2 ui-monospace,monospace;letter-spacing:0;color:var(--green);text-transform:uppercase}h1{font-size:clamp(34px,5vw,58px);line-height:1.04;max-width:760px;margin:12px 0 14px;letter-spacing:0}header p{max-width:720px;color:var(--muted);font-size:19px;margin:0}.verdict{margin:8px 0 28px;padding:17px 20px;border-left:5px solid var(--lime);background:#fff;box-shadow:var(--shadow);font-size:18px}.verdict b{color:var(--green)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{background:var(--white);border:1px solid var(--line);border-radius:6px;padding:20px;box-shadow:var(--shadow)}.wide{grid-column:1/-1}.panel h2{font-size:23px;margin:0 0 8px;line-height:1.2}.panel p{margin:6px 0;color:var(--muted)}.toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 4px}.controls{display:flex;gap:5px}.controls button{font:700 12px ui-monospace,monospace;border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 11px;cursor:pointer;border-radius:4px}.controls button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}.chart{width:100%;height:auto;overflow:visible}.chart text{font:12px ui-monospace,monospace;fill:var(--muted)}.chart .lang{font-weight:700;fill:var(--ink)}.chart .axis{stroke:#aab8b1;stroke-width:1}.chart .gridline{stroke:#e7ece8;stroke-width:1}.chart .range{stroke-width:2}.chart .box{stroke-width:1.5}.chart .median{stroke:var(--ink);stroke-width:2}.chart .sample{stroke:#fff;stroke-width:1}.key{display:flex;gap:18px;flex-wrap:wrap;font:12px ui-monospace,monospace;color:var(--muted);padding:0 0 8px}.key i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font:13px/1.35 ui-monospace,monospace;white-space:nowrap}th,td{text-align:right;padding:10px 8px;border-bottom:1px solid #e8ede8}th{color:var(--muted);font-size:11px;text-transform:uppercase}th:first-child,td:first-child{text-align:left}td:first-child{font-weight:700}.language{display:inline-flex;align-items:center;gap:8px}.swatch{width:10px;height:10px;border-radius:50%;display:inline-block}
+.notes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.note{padding:16px 17px;border-radius:5px;background:#e8f1ec}.note:nth-child(2){background:#fff0e8}.note:nth-child(3){background:#eaf0fb}.note h3{margin:0 0 5px;font-size:17px}.note p{margin:0;color:#435654}.short{font:700 13px/1.45 ui-monospace,monospace;color:var(--ink)!important}.details{margin-top:12px}.details summary{font:700 13px ui-monospace,monospace;cursor:pointer;color:var(--green)}.raw{font:12px/1.8 ui-monospace,monospace;color:var(--muted);overflow-wrap:anywhere}.meta{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 24px;margin-top:12px}.meta div{border-top:1px solid var(--line);padding-top:8px}.meta dt{font:700 11px ui-monospace,monospace;color:var(--muted);text-transform:uppercase}.meta dd{margin:3px 0 0;font:13px/1.4 ui-monospace,monospace;overflow-wrap:anywhere}.foot{padding:26px 0 45px;color:var(--muted);font:12px/1.6 ui-monospace,monospace}.small{font-size:13px!important}
+@media(max-width:720px){.shell{width:min(100% - 24px,1120px)}.mast{padding:16px 0}header{padding:30px 0 20px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.notes{grid-template-columns:1fr}.panel{padding:15px}.meta{grid-template-columns:1fr}.toolbar{align-items:flex-start}.chart{min-width:560px}.chartframe{overflow-x:auto}.verdict{font-size:16px}}
+.mast{border:0;color:#6b6d59}.mast strong{color:#dc4f37}.mast span:last-child{font-variant-numeric:tabular-nums}
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(220px,.7fr);gap:24px;align-items:center;margin:20px 0 16px;padding:32px 34px 34px;overflow:hidden;background:#d9ee77;border:1px solid #afc83f;border-radius:8px;box-shadow:0 12px 30px #4f5c2518;animation:flag-drop .55s cubic-bezier(.2,.8,.2,1) both}
+.hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:12px;background:repeating-linear-gradient(135deg,#172a2b 0 12px,#f7f8f4 12px 24px)}
+.hero-copy{position:relative;z-index:1}.hero .eyebrow{display:inline-flex;align-items:center;gap:8px;color:#294c43}.hero .eyebrow:before{content:"";width:9px;height:9px;border-radius:50%;background:#df4f37;box-shadow:0 0 0 4px #df4f3730}
+.hero h1{max-width:640px;margin:12px 0 12px;font:800 clamp(42px,6.6vw,76px)/.93 "Trebuchet MS",Georgia,serif;letter-spacing:0;color:#172a2b}.hero p{max-width:620px;margin:0;color:#304c43;font-size:18px}.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}.hero-tags span{padding:6px 10px;border:1px solid #758f33;border-radius:99px;background:#eff8be;color:#304c43;font:700 11px/1.2 ui-monospace,monospace}
+.hero-result{position:relative;z-index:1;justify-self:end;width:min(100%,280px);padding:17px 19px 18px;background:#172a2b;color:#f7f8f4;border-radius:6px;transform:rotate(1.2deg);box-shadow:7px 7px 0 #f7f8f4aa;animation:clock-pop .7s .2s cubic-bezier(.2,.8,.2,1) both}.hero-result .kicker{display:block;color:#d9ee77;font:700 10px ui-monospace,monospace;text-transform:uppercase}.hero-result strong{display:block;margin:5px 0;font:800 42px/.98 "Trebuchet MS",Georgia,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:0}.hero-result .runner{font:700 13px ui-monospace,monospace}.hero-result .delta{display:block;margin-top:9px;color:#c5d3c8;font:11px/1.4 ui-monospace,monospace}
+.race-call{margin:0 0 22px;padding:12px 15px;border-left:4px solid #df4f37;background:#fff0e8;color:#573a2b;font:700 13px/1.5 ui-monospace,monospace}.race-call b{color:#bd3b28}
+.panel{box-shadow:0 9px 24px #263e3510;transition:transform .18s ease,box-shadow .18s ease}.panel:hover{transform:translateY(-2px);box-shadow:0 14px 28px #263e3518}.panel h2{font:800 24px/1.15 "Trebuchet MS",Georgia,serif}.panel h2:before{content:"// ";color:#df4f37;font:700 17px ui-monospace,monospace}
+.race-board{display:grid;grid-template-columns:1fr;gap:7px;margin:14px 0 4px}.lane{display:grid;grid-template-columns:minmax(112px,160px) minmax(80px,1fr) 92px;gap:12px;align-items:center;padding:9px 11px;background:#f2f5ee;border:1px solid #e0e7dc;border-radius:4px;animation:lane-slide .42s both;animation-delay:calc(var(--lane) * 90ms)}.lane:first-child{background:#fff1cf;border-color:#e9c868}.lane-name{display:flex;align-items:center;gap:8px;font:800 13px ui-monospace,monospace}.lane-rank{display:grid;place-items:center;flex:0 0 23px;width:23px;height:23px;border-radius:50%;background:#172a2b;color:white;font-size:11px}.lane:first-child .lane-rank{background:#df4f37}.lane-track{height:11px;overflow:hidden;background:#dde5de;border-radius:99px}.lane-fill{height:100%;width:var(--bar);background:var(--lane-color);border-radius:99px;transform-origin:left;animation:bar-grow .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--lane) * 100ms + 140ms)}.lane-time{text-align:right;font:800 13px ui-monospace,monospace;font-variant-numeric:tabular-nums}.lane-delta{grid-column:2/4;margin-top:-8px;color:#64706a;font:10px ui-monospace,monospace}
+.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.panel{min-width:0}.lane{min-width:0}.lane-track{min-width:0}
+.key i{width:11px;height:11px}.chart .sample{stroke-width:1.5}.chart .gridline{stroke:#dbe4dc}.controls button{transition:background .15s ease,color .15s ease,transform .15s ease}.controls button:hover{transform:translateY(-1px)}
+@keyframes flag-drop{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}@keyframes clock-pop{0%{opacity:0;transform:translate(8px,6px) rotate(5deg) scale(.93)}100%{opacity:1;transform:rotate(1.2deg) scale(1)}}@keyframes lane-slide{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}@keyframes bar-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(max-width:720px){.grid{grid-template-columns:minmax(0,1fr)}.hero{grid-template-columns:1fr;padding:24px 20px 30px;gap:18px;margin-top:10px}.hero h1{font-size:48px}.hero-result{justify-self:start;width:min(100%,250px)}.race-call{margin-bottom:16px}.lane{grid-template-columns:minmax(105px,125px) minmax(0,1fr) 76px;gap:8px;padding:8px}.lane-name,.lane-time{font-size:11px}.lane-delta{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="mast"><span><strong>Synaptus rs2</strong> / baseline PSM benchmark</span><span id="runDate"></span></div>
+<header class="hero"><div class="hero-copy"><div class="eyebrow">WireTargets · discrete PSM · local benchmark, not a world record</div><h1>Echoes in.<br>Stopwatch on.</h1><p>Three implementations process the same ultrasound scan. The image agreement check comes first; this report covers the shared baseline PSM path, not NUFFT-PSM or SQ-PSM.</p><div class="hero-tags"><span id="lapTag"></span><span id="pixelTag"></span><span>same input · same math</span></div></div><aside class="hero-result" id="heroResult" aria-live="polite"></aside></header>
+<div class="race-call" id="verdict" role="status"></div>
+<main class="grid">
+<section class="panel wide"><h2>Median board</h2><p>One-machine standings, sorted by median time. Bar length tracks elapsed time against the slowest median in this run; it is not a language score.</p><div class="race-board" id="raceBoard"></div></section>
+<section class="panel wide"><h2>How long did each take?</h2><p>Every dot is a timed run. The thick bar is the middle half; the dark notch is the median. Lower means quicker.</p>
+<div class="toolbar"><div class="controls" aria-label="Chart measure"><button data-mode="seconds" aria-pressed="true">Seconds</button><button data-mode="ratio" aria-pressed="false">Compared with Rust</button></div><div class="controls" aria-label="Axis scale"><button data-scale="linear" aria-pressed="true">Linear</button><button data-scale="log" aria-pressed="false">Log</button></div></div>
+<div class="key" id="key"></div><div class="chartframe"><svg id="chart" class="chart" role="img" aria-label="Repeated benchmark run distribution"></svg></div></section>
+<section class="panel wide"><h2>The numbers</h2><p>Q1 and Q3 bracket the middle 50% of runs. SD is the sample standard deviation. Quartiles use linear interpolation.</p><div class="tablewrap"><table><thead><tr><th>Implementation</th><th>Mean</th><th>Median</th><th>Q1</th><th>Q3</th><th>SD</th><th>Min</th><th>Max</th></tr></thead><tbody id="stats"></tbody></table></div>
+<details class="details"><summary>Show every timed run</summary><div id="raw" class="raw"></div></details></section>
+<section class="panel wide"><h2>ELI5, with field notes</h2><div class="notes">
+<article class="note"><h3>The simple picture</h3><p>Think of each program as a crew sorting the same pile of echoes into a picture. We start the clock after the data is loaded. Each crew gets the same number of practice runs, then the same number of timed turns.</p></article>
+<article class="note"><h3>Badger note</h3><p>Do not crown one lucky sprint. The median is the steady middle; the Q1-to-Q3 bar shows how much the usual run wiggles.</p></article>
+<article class="note"><h3>Raccoon note</h3><p>This is one scan on one computer. Different FFT engines, compilers, CPUs, thread settings, or data can reshuffle the order. No language wins every race.</p></article>
+</div><p class="short">Short version: lower median = faster here. Similar ranges = do not over-read a tiny gap.</p><p class="small">This compares these implementations and their numerical libraries, not programming languages in isolation. Rust is a release build; the run requests one worker where each runtime allows it. MATLAB/Octave and NumPy use their own FFT backends.</p></section>
+<section class="panel"><h2>What went on the clock?</h2><p>One end-to-end 2D PSM run on the bundled WireTargets dataset. Loading files and starting the programs are not timed.</p><dl class="meta" id="workload"></dl></section>
+<section class="panel"><h2>Can we trust the race?</h2><p>The three complex output images are compared before timing results are reported. The error below is the largest pixel difference divided by Rust's peak pixel amplitude.</p><dl class="meta" id="agreement"></dl></section>
+<section class="panel wide"><h2>Machine and tools</h2><dl class="meta" id="environment"></dl></section>
+</main>
+<footer class="foot">Benchmark tooling and report by GitHub Copilot, guided by Tomas. The latest result is benchmarks/benchmark_results.json; each run is archived at <code id="runRecord"></code>. Input and runner SHA-256 provenance is included. Rebuild with <code id="rebuild"></code>.</footer>
+</div>
+<script>
+const REPORT = {"timestamp":"2026-11-25T13:14:09.994982+00:00","run_record":"runs/20261125-131409-994945-psm-benchmark","benchmark_scope":"Discrete baseline PSM parity only; NUFFT-PSM and SQ-PSM are not timed by this cross-runtime comparison.","engine_key":"octave","engine_name":"Octave","rebuild_command":"python -I benchmarks/run_benchmark.py --engine octave --warmups 2 --repeats 9","warmups":2,"repeats":9,"tolerance_normalized_to_rust_peak":1e-11,"palette":{"rust":"#0c8177","octave":"#df6848","python":"#386cb0"},"languages":{"rust":{"name":"Rust rs2 PSM"},"octave":{"name":"Octave"},"python":{"name":"Python / NumPy"}},"results":{"rust":{"samples_sec":[1.217302612,1.19000793,1.224626051,1.22464421,1.207266531,1.198608073,1.196244289,1.397010767,1.325982045],"mean_sec":1.2424102786666666,"median_sec":1.217302612,"q1_sec":1.198608073,"q3_sec":1.22464421,"sd_sec":0.07086860991034782,"min_sec":1.19000793,"max_sec":1.397010767},"octave":{"samples_sec":[2.319492102,2.225310087,2.225751877,2.245196819,2.213819027,2.345571041,2.206683874,2.432677984,2.262595892],"mean_sec":2.2752331892222224,"median_sec":2.245196819,"q1_sec":2.225310087,"q3_sec":2.319492102,"sd_sec":0.07596745792313465,"min_sec":2.206683874,"max_sec":2.432677984},"python":{"samples_sec":[1.32765518,1.335829707,1.41955282,2.328218582,1.40738371,1.325000858,1.303034034,1.306945646,1.293448989],"mean_sec":1.4496743917777777,"median_sec":1.32765518,"q1_sec":1.306945646,"q3_sec":1.40738371,"sd_sec":0.332454839267314,"min_sec":1.293448989,"max_sec":2.328218582}},"agreement":{"rust":{"points":238700,"max_abs_error_over_rust_peak":0.0},"octave":{"points":238700,"max_abs_error_over_rust_peak":2.714121594667496e-16},"python":{"points":238700,"max_abs_error_over_rust_peak":2.862722888106265e-16}},"output_points":238700,"workload":{"dataset":"WireTargets (bundled data/wire.f64)","nt":6800,"nx":350,"fs_hz":25000000.0,"f_low_hz":400000.0,"f_high_hz":2500000.0,"velocity_m_s":1480.0,"thickness_m":0.23088,"x_step_m":0.0005,"depth_step":"(c / 2) / f_high, matching PsmOptions default"},"environment":{"os":"Linux-7.3.6-arch1-1-x86_64-with-glibc2.44","cpu":"AMD Ryzen 7 5700U with Radeon Graphics","logical_cpus":16,"python":"3.14.10","numpy":"2.5.5","octave_version":"GNU Octave (x86_64-pc-linux-gnu) version 11.3.0","rustc":"rustc 1.98.1 (48a229cea 2026-09-01)","cargo":"cargo 1.98.1 (797e8a9bc 2026-08-05)","parallelism":"one worker requested; Rayon=1, MATLAB maxNumCompThreads(1) where available; common math thread env vars=1","git_revision":"127c5105408acb903129abf54277fe8dc6d0e811"},"provenance":{"wire_f64_sha256":"1dc2a000df02368463f2378868f5bb3f6aaf5062ae84575ee3a52ed3d11bb9c7","wire_metadata_sha256":"5e7c4fdf4d681228c5044eb388b185a912f3c3d7eb97c72b6ca6c083c5cee8c2","rust_runner_sha256":"b06a7877816ab0078a688ec1f500e5cb0a70460b47c5f6a4c93dc27f988420df","octave_runner_sha256":"21a04d73e08c91eab465d16e3e47c362103dcfdb73046cd8228fc349bb67389e","python_runner_sha256":"0374ae62900866adafbc7e121349c29e569ad8bf4ee4db95e36f068011be9d61","orchestrator_sha256":"9057890aca1e0bef3eb2a17a52f1dc219f992ae009024d1b1959f378d645798e","psm_implementation_sha256":"864026679a1b6f6b221d1c69b78291cae97b1a3dc1185810813fa1c854708346","cargo_manifest_sha256":"45b291ae617a3b96c7648c96ce5814085846f8f34eae42f786e4bec711521513","cargo_lock_sha256":"e650effe92485d0c5a8044e54fe8ab2b623ff9722259960e30be1e7b88d22f31","benchmark_requirements_sha256":"8ac7cb7e51bc457fb12a71a87e0d702be498347c4523571d831445fd0748d3a7"}};
+const keys = Object.keys(REPORT.results);
+const palette = REPORT.palette;
+const engineKey = REPORT.engine_key || (REPORT.environment.octave ? 'octave' : 'matlab');
+const engineName = REPORT.engine_name || REPORT.languages[engineKey].name;
+const fmt = value => `${value.toFixed(3)} s`;
+document.getElementById('runDate').textContent = new Date(REPORT.timestamp).toLocaleString();
+const rust = REPORT.results.rust.median_sec;
+const fastest = keys.reduce((best, key) => REPORT.results[key].median_sec < REPORT.results[best].median_sec ? key : best, keys[0]);
+const fastestName = REPORT.languages[fastest].name;
+const fastestMedian = REPORT.results[fastest].median_sec;
+const standings = [...keys].sort((a, b) => REPORT.results[a].median_sec - REPORT.results[b].median_sec);
+const nextMedian = REPORT.results[standings[1]].median_sec;
+const nextGap = nextMedian - fastestMedian;
+const nextGapPercent = (nextGap / fastestMedian) * 100;
+document.getElementById('lapTag').textContent = `${REPORT.warmups} warmups · ${REPORT.repeats} timed laps each`;
+document.getElementById('pixelTag').textContent = `${REPORT.output_points.toLocaleString()} image pixels checked`;
+document.getElementById('heroResult').innerHTML = `<span class="kicker">Quickest median · this machine</span><strong>${fastestMedian.toFixed(3)}<small> s</small></strong><span class="runner">${fastestName} · ${REPORT.repeats} timed laps</span><span class="delta">Next median: +${nextGap.toFixed(3)} s (${nextGapPercent.toFixed(1)}% longer)</span>`;
+const worstError = Math.max(...Object.values(REPORT.agreement).map(value => value.max_abs_error_over_rust_peak));
+document.getElementById('verdict').innerHTML = `<b>Same-picture check passed.</b> Worst pixel difference: ${worstError.toExponential(2)} of Rust's peak. ${fastestName} had the shortest median in this run; one scan on one machine does not crown a universal champion.`;
+const slowestMedian = Math.max(...keys.map(key => REPORT.results[key].median_sec));
+document.getElementById('raceBoard').innerHTML = standings.map((key, index) => {
+    const median = REPORT.results[key].median_sec;
+    const gap = median - fastestMedian;
+    const gapText = gap === 0 ? 'fastest median · local result' : `+${gap.toFixed(3)} s · +${(gap / fastestMedian * 100).toFixed(1)}% vs fastest`;
+    return `<div class="lane" style="--lane:${index};--lane-color:${palette[key]}"><span class="lane-name"><i class="lane-rank">${index + 1}</i>${REPORT.languages[key].name}</span><div class="lane-track" role="img" aria-label="${REPORT.languages[key].name}: median ${fmt(median)}"><div class="lane-fill" style="--bar:${median / slowestMedian * 100}%"></div></div><span class="lane-time">${fmt(median)}</span><span class="lane-delta">${gapText}</span></div>`;
+}).join('');
+document.getElementById('key').innerHTML = keys.map(key => `<span><i style="background:${palette[key]}"></i>${REPORT.languages[key].name}</span>`).join('');
+document.getElementById('stats').innerHTML = keys.map(key => {
+  const s = REPORT.results[key];
+  return `<tr><td><span class="language"><i class="swatch" style="background:${palette[key]}"></i>${REPORT.languages[key].name}</span></td><td>${fmt(s.mean_sec)}</td><td>${fmt(s.median_sec)}</td><td>${fmt(s.q1_sec)}</td><td>${fmt(s.q3_sec)}</td><td>${fmt(s.sd_sec)}</td><td>${fmt(s.min_sec)}</td><td>${fmt(s.max_sec)}</td></tr>`;
+}).join('');
+document.getElementById('raw').innerHTML = keys.map(key => `<p><b>${REPORT.languages[key].name}:</b> ${REPORT.results[key].samples_sec.map(fmt).join(' · ')}</p>`).join('');
+const pairList = values => Object.entries(values).map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('');
+document.getElementById('workload').innerHTML = pairList({
+  'Input samples': `${REPORT.workload.nt.toLocaleString()} × ${REPORT.workload.nx.toLocaleString()}`,
+  'Output pixels': REPORT.output_points.toLocaleString(),
+  'Frequency band': `${REPORT.workload.f_low_hz / 1e6}–${REPORT.workload.f_high_hz / 1e6} MHz`,
+  'Timed runs': `${REPORT.repeats} per implementation`,
+  'Practice runs': `${REPORT.warmups} per implementation`,
+  'Timer scope': 'FFT + migration + image reconstruction',
+  'Excluded': 'File reads, process startup, report generation',
+  'Rust build': 'Release, one worker'
+});
+document.getElementById('agreement').innerHTML = pairList(Object.fromEntries(keys.map(key => [
+  REPORT.languages[key].name,
+  `${REPORT.agreement[key].max_abs_error_over_rust_peak.toExponential(2)} · ${REPORT.agreement[key].points.toLocaleString()} pixels`
+])));
+document.getElementById('environment').innerHTML = pairList({
+  'CPU': REPORT.environment.cpu,
+  'System': REPORT.environment.os,
+  'Rust': REPORT.environment.rustc,
+    [engineName]: REPORT.environment[`${engineKey}_version`] || REPORT.environment[engineKey],
+  'Python / NumPy': `${REPORT.environment.python} / ${REPORT.environment.numpy}`,
+  'Parallelism': REPORT.environment.parallelism,
+  'Git revision': REPORT.environment.git_revision
+});
+document.getElementById('rebuild').textContent = REPORT.rebuild_command || `python -I benchmarks/run_benchmark.py --engine ${engineKey}`;
+document.getElementById('runRecord').textContent = REPORT.run_record;
+let mode = 'seconds', scale = 'linear', dots = true;
+function renderChart() {
+  const svg = document.getElementById('chart');
+  const width = 940, left = 148, right = 28, top = 40, row = 75;
+  const height = top + row * keys.length + 36;
+  const plotWidth = width - left - right;
+  const values = keys.flatMap(key => REPORT.results[key].samples_sec.map(value => mode === 'seconds' ? value : value / rust));
+  if (mode === 'ratio') values.push(1);
+  let low = Math.min(...values), high = Math.max(...values);
+  if (scale === 'linear') { const pad = (high - low || high * 0.1 || 1) * 0.12; low = Math.max(0, low - pad); high += pad; }
+  else { low = Math.max(Number.MIN_VALUE, low * 0.78); high *= 1.28; }
+  const project = value => {
+    const fraction = scale === 'linear' ? (value - low) / (high - low) : (Math.log(value) - Math.log(low)) / (Math.log(high) - Math.log(low));
+    return left + fraction * plotWidth;
+  };
+  const tickValues = Array.from({length:5}, (_, i) => scale === 'linear' ? low + (high - low) * i / 4 : Math.exp(Math.log(low) + (Math.log(high) - Math.log(low)) * i / 4));
+  let content = '';
+  tickValues.forEach((value, i) => {
+    const x = project(value);
+    content += `<line class="gridline" x1="${x}" y1="${top - 12}" x2="${x}" y2="${height - 28}"/><text x="${x}" y="${height - 7}" text-anchor="middle">${mode === 'seconds' ? `${value.toPrecision(2)} s` : `${value.toPrecision(2)}×`}</text>`;
+  });
+  if (mode === 'ratio' && 1 >= low && 1 <= high) content += `<line x1="${project(1)}" y1="${top - 12}" x2="${project(1)}" y2="${height - 28}" stroke="#172a2b" stroke-dasharray="4 4"/>`;
+  keys.forEach((key, index) => {
+    const s = REPORT.results[key];
+    const vals = s.samples_sec.map(value => mode === 'seconds' ? value : value / rust);
+    const y = top + index * row + 19;
+    const q1 = mode === 'seconds' ? s.q1_sec : s.q1_sec / rust;
+    const q3 = mode === 'seconds' ? s.q3_sec : s.q3_sec / rust;
+    const median = mode === 'seconds' ? s.median_sec : s.median_sec / rust;
+    const min = Math.min(...vals), max = Math.max(...vals), color = palette[key];
+    content += `<text class="lang" x="0" y="${y + 4}">${REPORT.languages[key].name}</text>`;
+    content += `<line class="range" x1="${project(min)}" y1="${y}" x2="${project(max)}" y2="${y}" stroke="${color}"/><line x1="${project(min)}" y1="${y-6}" x2="${project(min)}" y2="${y+6}" stroke="${color}"/><line x1="${project(max)}" y1="${y-6}" x2="${project(max)}" y2="${y+6}" stroke="${color}"/>`;
+    content += `<rect class="box" x="${project(q1)}" y="${y-12}" width="${Math.max(1, project(q3)-project(q1))}" height="24" rx="3" fill="${color}" fill-opacity=".2" stroke="${color}"/><line class="median" x1="${project(median)}" y1="${y-12}" x2="${project(median)}" y2="${y+12}"/>`;
+    if (dots) vals.forEach((value, n) => { const jitter = ((n % 5) - 2) * 3; content += `<circle class="sample" cx="${project(value)}" cy="${y+jitter}" r="3.5" fill="${color}"><title>Run ${n+1}: ${mode === 'seconds' ? fmt(value) : `${value.toFixed(3)}× Rust median`}</title></circle>`; });
+  });
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.innerHTML = content;
+}
+document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => {
+  mode = button.dataset.mode;
+  document.querySelectorAll('[data-mode]').forEach(item => item.setAttribute('aria-pressed', item === button));
+  renderChart();
+}));
+document.querySelectorAll('[data-scale]').forEach(button => button.addEventListener('click', () => {
+  scale = button.dataset.scale;
+  document.querySelectorAll('[data-scale]').forEach(item => item.setAttribute('aria-pressed', item === button));
+  renderChart();
+}));
+renderChart();
+</script>
+</body>
+</html>

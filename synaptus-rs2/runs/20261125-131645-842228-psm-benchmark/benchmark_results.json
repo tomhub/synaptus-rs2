@@ -1,0 +1,140 @@
+{
+  "timestamp": "2026-11-25T13:16:45.842270+00:00",
+  "run_record": "runs/20261125-131645-842228-psm-benchmark",
+  "benchmark_scope": "Discrete baseline PSM parity only; NUFFT-PSM and SQ-PSM are not timed by this cross-runtime comparison.",
+  "engine_key": "octave",
+  "engine_name": "Octave",
+  "rebuild_command": "python -I benchmarks/run_benchmark.py --engine octave --warmups 2 --repeats 9",
+  "warmups": 2,
+  "repeats": 9,
+  "tolerance_normalized_to_rust_peak": 1e-11,
+  "palette": {
+    "rust": "#0c8177",
+    "octave": "#df6848",
+    "python": "#386cb0"
+  },
+  "languages": {
+    "rust": {
+      "name": "Rust rs2 PSM"
+    },
+    "octave": {
+      "name": "Octave"
+    },
+    "python": {
+      "name": "Python / NumPy"
+    }
+  },
+  "results": {
+    "rust": {
+      "samples_sec": [
+        1.240871373,
+        1.204327791,
+        1.184893838,
+        1.193878108,
+        1.19480253,
+        1.240217658,
+        1.220065455,
+        1.223910648,
+        1.377346326
+      ],
+      "mean_sec": 1.2311459696666667,
+      "median_sec": 1.220065455,
+      "q1_sec": 1.19480253,
+      "q3_sec": 1.240217658,
+      "sd_sec": 0.058411005370160675,
+      "min_sec": 1.184893838,
+      "max_sec": 1.377346326
+    },
+    "octave": {
+      "samples_sec": [
+        2.348450899,
+        2.347008944,
+        2.471251011,
+        2.513406992,
+        2.388894081,
+        2.347601891,
+        2.325122833,
+        2.391592026,
+        2.398394108
+      ],
+      "mean_sec": 2.392413642777778,
+      "median_sec": 2.388894081,
+      "q1_sec": 2.347601891,
+      "q3_sec": 2.398394108,
+      "sd_sec": 0.062683735138433,
+      "min_sec": 2.325122833,
+      "max_sec": 2.513406992
+    },
+    "python": {
+      "samples_sec": [
+        1.411375065,
+        1.427591491,
+        1.350660951,
+        1.349082673,
+        1.331136414,
+        1.337175468,
+        1.331940779,
+        1.40086553,
+        1.346751017
+      ],
+      "mean_sec": 1.3651754875555555,
+      "median_sec": 1.349082673,
+      "q1_sec": 1.337175468,
+      "q3_sec": 1.40086553,
+      "sd_sec": 0.03735012485773591,
+      "min_sec": 1.331136414,
+      "max_sec": 1.427591491
+    }
+  },
+  "agreement": {
+    "rust": {
+      "points": 238700,
+      "max_abs_error_over_rust_peak": 0.0
+    },
+    "octave": {
+      "points": 238700,
+      "max_abs_error_over_rust_peak": 2.714121594667496e-16
+    },
+    "python": {
+      "points": 238700,
+      "max_abs_error_over_rust_peak": 2.862722888106265e-16
+    }
+  },
+  "output_points": 238700,
+  "workload": {
+    "dataset": "WireTargets (bundled data/wire.f64)",
+    "nt": 6800,
+    "nx": 350,
+    "fs_hz": 25000000.0,
+    "f_low_hz": 400000.0,
+    "f_high_hz": 2500000.0,
+    "velocity_m_s": 1480.0,
+    "thickness_m": 0.23088,
+    "x_step_m": 0.0005,
+    "depth_step": "(c / 2) / f_high, matching PsmOptions default"
+  },
+  "environment": {
+    "os": "Linux-7.3.6-arch1-1-x86_64-with-glibc2.44",
+    "cpu": "AMD Ryzen 7 5700U with Radeon Graphics",
+    "logical_cpus": 16,
+    "python": "3.14.10",
+    "numpy": "2.5.5",
+    "octave_version": "GNU Octave (x86_64-pc-linux-gnu) version 11.3.0",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "parallelism": "one worker requested; Rayon=1, MATLAB maxNumCompThreads(1) where available; common math thread env vars=1",
+    "git_revision": "127c5105408acb903129abf54277fe8dc6d0e811"
+  },
+  "provenance": {
+    "wire_f64_sha256": "1dc2a000df02368463f2378868f5bb3f6aaf5062ae84575ee3a52ed3d11bb9c7",
+    "wire_metadata_sha256": "5e7c4fdf4d681228c5044eb388b185a912f3c3d7eb97c72b6ca6c083c5cee8c2",
+    "rust_runner_sha256": "b06a7877816ab0078a688ec1f500e5cb0a70460b47c5f6a4c93dc27f988420df",
+    "octave_runner_sha256": "21a04d73e08c91eab465d16e3e47c362103dcfdb73046cd8228fc349bb67389e",
+    "python_runner_sha256": "0374ae62900866adafbc7e121349c29e569ad8bf4ee4db95e36f068011be9d61",
+    "orchestrator_sha256": "ff4328b2bb17074c485b037bda16253afba29c6b9954e156db2616443bde1ae1",
+    "psm_implementation_sha256": "864026679a1b6f6b221d1c69b78291cae97b1a3dc1185810813fa1c854708346",
+    "cargo_manifest_sha256": "45b291ae617a3b96c7648c96ce5814085846f8f34eae42f786e4bec711521513",
+    "cargo_lock_sha256": "e650effe92485d0c5a8044e54fe8ab2b623ff9722259960e30be1e7b88d22f31",
+    "benchmark_requirements_sha256": "8ac7cb7e51bc457fb12a71a87e0d702be498347c4523571d831445fd0748d3a7"
+  }
+}
